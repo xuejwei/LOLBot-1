@@ -148,7 +148,7 @@ namespace Automation
                             IsOk = false; break;
                         }
                     }
-                    if (IsOk) { List.Add(new Rectangle(w, h, searchRect.Width, searchRect.Height)); }
+                    if (IsOk) { List.Add(new Rectangle(w, h, subImage.Width, subImage.Height)); }
                     IsOk = false;
                 }
             }
