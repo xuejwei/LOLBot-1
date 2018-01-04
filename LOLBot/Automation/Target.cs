@@ -27,7 +27,6 @@ namespace Automation
             get
             {
                 Random rnd = new Random();
-                Console.WriteLine(rnd.Next(0, rect.Width));
                 return new Point(rect.X + rnd.Next(0, rect.Width), rect.Y + rnd.Next(0, rect.Height));
             }
         }

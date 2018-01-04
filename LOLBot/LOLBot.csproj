@@ -176,6 +176,8 @@
     <Content Include="dd74000x64.64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Image\WalkMark.png" />
+    <Resource Include="Resources\Image\WaitingStartGame.png" />
     <Resource Include="Resources\Image\LockInChampion.png" />
     <Resource Include="Resources\Image\EditRune.png" />
     <Resource Include="Resources\Image\ChampionHeadshotFrame.png" />

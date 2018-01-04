@@ -124,7 +124,7 @@ namespace LOLBot
         /// </summary>
         public static void inQueue()
         {
-            Console.WriteLine("readyGame 开始");
+            Console.WriteLine("inQueue 开始");
             ClientHandle clientHandle = new ClientHandle(clientWindow);
 
             while (true)
@@ -165,7 +165,7 @@ namespace LOLBot
                 Thread.Sleep(4000);
             }
 
-            Console.WriteLine("readyGame 结束");
+            Console.WriteLine("inQueue 结束");
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace LOLBot
 
             while (true)
             {
-                Thread.Sleep(4000);
+                Thread.Sleep(3000);
 
                 if (!clientHandle.CanHandle())
                 {
@@ -192,17 +192,28 @@ namespace LOLBot
                 }
                 else
                 {//在选择英雄界面
+                    if(clientHandle.DidChoosedChampion())
+                    {//已经选择英雄
+                        break;
+                    }
+
                     if(clientHandle.RandomlyChooseChampion())
-                    {
-                        Console.WriteLine();
+                    {//随机选择一个英雄
+                        Thread.Sleep(2000);
+                        if(clientHandle.LockInChampion())
+                        {
+                            //一直判断这个界面
+                            StartChooseChampionThread();
+                            return;
+                        }
                     }
                     else
                     {// 没有英雄可以选择
-                        Console.WriteLine();
+                        //清空搜索
                     }
                 }
 
-                Thread.Sleep(4000);
+                Thread.Sleep(3000);
             }
 
             Console.WriteLine("chooseChampion 结束");

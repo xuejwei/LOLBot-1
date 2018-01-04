@@ -103,6 +103,16 @@ namespace LOLBot {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap LockInChampion {
+            get {
+                object obj = ResourceManager.GetObject("LockInChampion", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap QueueUp_Hover {
             get {
                 object obj = ResourceManager.GetObject("QueueUp_Hover", resourceCulture);
@@ -136,6 +146,26 @@ namespace LOLBot {
         internal static System.Drawing.Bitmap TeamRoom_Disabled {
             get {
                 object obj = ResourceManager.GetObject("TeamRoom_Disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap WaitingStartGame {
+            get {
+                object obj = ResourceManager.GetObject("WaitingStartGame", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap WalkMark {
+            get {
+                object obj = ResourceManager.GetObject("WalkMark", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

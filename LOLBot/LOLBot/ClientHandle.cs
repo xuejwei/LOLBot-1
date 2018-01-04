@@ -135,7 +135,7 @@ namespace LOLBot
             Bitmap editRune = Resource.EditRune;
 
             ParserImageInWindow parser = new ParserImageInWindow(editRune, base.window, new Rectangle(370, 666, 60, 50));
-            if (parser.FindInWindow(Color.Empty, 10))
+            if (parser.FindInWindow(Color.FromArgb(255, 0, 255), 20))
             {
                 Target target = parser.GetATarget();
                 Point clickPoint = target.randomPoint;
@@ -165,6 +165,48 @@ namespace LOLBot
 
                 base.Click(clickPoint);
 
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 锁定英雄
+        /// </summary>
+        /// <returns></returns>
+        public bool LockInChampion()
+        {
+            Bitmap lockInChampion = Resource.LockInChampion;
+
+            ParserImageInWindow parser = new ParserImageInWindow(lockInChampion, base.window, new Rectangle(550, 575, 210, 80));
+            if (parser.FindInWindow())
+            {
+                Target targets = parser.GetATarget();
+
+                base.Click(targets.randomPoint);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 是否已经选择英雄
+        /// </summary>
+        /// <returns></returns>
+        public bool DidChoosedChampion()
+        {
+            Bitmap waitingStartGame = Resource.WaitingStartGame;
+
+            ParserImageInWindow parser = new ParserImageInWindow(waitingStartGame, base.window, new Rectangle(525, 10, 220, 50));
+            if (parser.FindInWindow(Color.FromArgb(255, 0, 255), 50))
+            {
                 return true;
             }
             else
