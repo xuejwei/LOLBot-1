@@ -24,9 +24,9 @@ namespace LOLBot
             mouseController = new MouseController();
         }
 
-        public bool CanHandle()
+        public void CanHandle()
         {
-            return !User32.IsZoomed(window.windowHandle);
+            User32.ShowWindow(window.windowHandle, User32.SW_RESTORE);
         }
 
         public void Click(Point point)

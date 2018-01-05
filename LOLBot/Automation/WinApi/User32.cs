@@ -9,7 +9,19 @@
     /// </summary>
     internal class User32
     {
-        public delegate IntPtr HookProc(int code, UIntPtr wParam, IntPtr lParam);
+
+        public const int SW_HIDE = 0;
+        public const int SW_NORMAL = 1;
+        public const int SW_MAXIMIZE = 3;
+        public const int SW_SHOWNOACTIVATE = 4;
+        public const int SW_SHOW = 5;
+        public const int SW_MINIMIZE = 6;
+        public const int SW_RESTORE = 9;
+        public const int SW_SHOWDEFAULT = 10;
+        
+
+        [DllImport("user32.dll")]
+        public static extern int ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -47,13 +59,6 @@
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetCursor(IntPtr cursorHandle);
-
-        [DllImport("user32.dll")]
-        public static extern int SetWindowsHookEx(
-            int hookId,
-            HookProc function,
-            IntPtr instance,
-            int threadId);
 
         [DllImport("user32.dll")]
         public static extern bool UnhookWindowsHookEx(int hookId);
