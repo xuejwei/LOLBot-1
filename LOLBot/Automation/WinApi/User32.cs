@@ -18,21 +18,21 @@
         public const int SW_MINIMIZE = 6;
         public const int SW_RESTORE = 9;
         public const int SW_SHOWDEFAULT = 10;
-        
+
+        public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1); //窗体置顶
+        public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2); //取消窗体置顶
+        public static uint SWP_NOMOVE = 0x0002; //不调整窗体位置
+        public static uint SWP_NOSIZE = 0x0001; //不调整窗体大小
+
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
 
         [DllImport("user32.dll")]
         public static extern int ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr CallNextHookEx(
-            int hookId,
-            int code,
-            UIntPtr wParam,
-            IntPtr lParam);
-
+        
         [DllImport("user32.dll")]
         public static extern IntPtr GetDesktopWindow();
 
@@ -76,7 +76,7 @@
         public static extern int MapVirtualKey(uint Ucode, uint uMapType);
 
         [DllImport("user32.dll")]
-        public static extern bool IsZoomed(IntPtr hWnd);
+        public static extern bool IsIconic(IntPtr hWnd);
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetForegroundWindow(IntPtr hwnd);

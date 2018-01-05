@@ -23,14 +23,11 @@ namespace LOLBot
         {
             Bitmap inQueue = Resource.InQueue;
             ParserImageInWindow parser = new ParserImageInWindow(inQueue, base.window, new Rectangle(1124, 40, 100, 50));
-            if (parser.FindInWindow())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+
+            bool found = parser.FindInWindow(Color.Empty, 20);
+            parser.Dispose();
+
+            if (found) return true; else return false;
         }
 
         /// <summary>
@@ -40,14 +37,11 @@ namespace LOLBot
         {
             Bitmap teamRoomDisabled = Resource.TeamRoom_Disabled;
             ParserImageInWindow parser = new ParserImageInWindow(teamRoomDisabled, base.window,new Rectangle(0, 0, 200, 65));
-            if (parser.FindInWindow())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+
+            bool found = parser.FindInWindow();
+            parser.Dispose();
+
+            if (found) return true; else return false;
         }
 
         /// <summary>
@@ -60,7 +54,11 @@ namespace LOLBot
 
             ParserImageInWindow parserNormal = new ParserImageInWindow(queueUpNormal, base.window, new Rectangle(425, 660, 230, 50));
             ParserImageInWindow parserHover = new ParserImageInWindow(queueUpHover, base.window, new Rectangle(425, 660, 230, 50));
-            if (parserNormal.FindInWindow() || parserHover.FindInWindow())
+            bool found = parserNormal.FindInWindow() || parserHover.FindInWindow();
+            parserNormal.Dispose();
+            parserHover.Dispose();
+
+            if (found)
             {
                 Target normalTarget = parserNormal.GetATarget();
                 Target hoverTarget = parserHover.GetATarget();
@@ -87,7 +85,10 @@ namespace LOLBot
             Bitmap acceptImage = Resource.Accept;
 
             ParserImageInWindow parser = new ParserImageInWindow(acceptImage, base.window, new Rectangle(545, 525, 220, 90));
-            if(parser.FindInWindow())
+            bool found = parser.FindInWindow();
+            parser.Dispose();
+
+            if (found)
             {
                 Target target = parser.GetATarget();
                 Point clickPoint = target.randomPoint;
@@ -111,7 +112,10 @@ namespace LOLBot
             Bitmap searchChampion = Resource.SearchChampion;
 
             ParserImageInWindow parser = new ParserImageInWindow(searchChampion, base.window, new Rectangle(728, 90, 60, 60));
-            if (parser.FindInWindow())
+            bool found = parser.FindInWindow();
+            parser.Dispose();
+
+            if (found)
             {
                 Target target = parser.GetATarget();
                 Point clickPoint = target.randomPoint;
@@ -135,7 +139,10 @@ namespace LOLBot
             Bitmap editRune = Resource.EditRune;
 
             ParserImageInWindow parser = new ParserImageInWindow(editRune, base.window, new Rectangle(370, 666, 60, 50));
-            if (parser.FindInWindow(Color.FromArgb(255, 0, 255), 20))
+            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 20);
+            parser.Dispose();
+
+            if (found)
             {
                 Target target = parser.GetATarget();
                 Point clickPoint = target.randomPoint;
@@ -157,7 +164,10 @@ namespace LOLBot
             Bitmap ChampionHeadshotFrame = Resource.ChampionHeadshotFrame;
 
             ParserImageInWindow parser = new ParserImageInWindow(ChampionHeadshotFrame, base.window, new Rectangle(340, 130, 610, 470));
-            if (parser.FindInWindow(Color.White, 0))
+            bool found = parser.FindInWindow(Color.White, 0);
+            parser.Dispose();
+
+            if (found)
             {
                 Target[] targets = parser.GetTargets();
 
@@ -182,7 +192,10 @@ namespace LOLBot
             Bitmap lockInChampion = Resource.LockInChampion;
 
             ParserImageInWindow parser = new ParserImageInWindow(lockInChampion, base.window, new Rectangle(550, 575, 210, 80));
-            if (parser.FindInWindow())
+            bool found = parser.FindInWindow();
+            parser.Dispose();
+
+            if (found)
             {
                 Target targets = parser.GetATarget();
 
@@ -205,14 +218,11 @@ namespace LOLBot
             Bitmap waitingStartGame = Resource.WaitingStartGame;
 
             ParserImageInWindow parser = new ParserImageInWindow(waitingStartGame, base.window, new Rectangle(525, 10, 220, 50));
-            if (parser.FindInWindow(Color.FromArgb(255, 0, 255), 50))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+
+            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 50);
+            parser.Dispose();
+
+            if (found) return true; else return false;
         }
     }
 }

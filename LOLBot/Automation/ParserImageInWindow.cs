@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Automation
 {
-    class ParserImageInWindow
+    class ParserImageInWindow : IDisposable
     {
         private readonly Bitmap image;
         public readonly Window window;
@@ -30,6 +30,20 @@ namespace Automation
             this.searchZone = searchZone;
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.image.Dispose();
+            }
+        }
+
         /// <summary>
         ///  是否能在窗口中找到这个图片
         /// </summary>
@@ -45,12 +59,14 @@ namespace Automation
             Rectangle[] result = new FindImage().Match(parentImageData, subImageData, new Rectangle(searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height));
             sw.Stop();
 
+            windowScreenshot.UnlockBits(parentImageData);
+            this.image.UnlockBits(subImageData);
+
+            Graphics g = Graphics.FromImage(windowScreenshot);
+            g.DrawRectangle(new Pen(Color.Red, 1), searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height);
+            windowScreenshot.Save(@"C:\Users\Injoy\Desktop\draw.png");
+            
             windowScreenshot.Dispose();
-            image.Dispose();
-            //windowScreenshot.UnlockBits(parentImageData);
-            //Graphics g = Graphics.FromImage(windowScreenshot);
-            //g.DrawRectangle(new Pen(Color.Red, 1), searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height);
-            //windowScreenshot.Save(@"C:\Users\Injoy\Desktop\draw.png");
 
             if (result.Length != 0)
             {
@@ -93,14 +109,11 @@ namespace Automation
                 result = new FindImage().Match(parentImageData, subImageData, searchZone, excludeColor, similarity);
             }
             sw.Stop();
-
-            //windowScreenshot.UnlockBits(parentImageData);
-            //Graphics g = Graphics.FromImage(windowScreenshot);
-            //g.DrawRectangle(new Pen(Color.Red, 1), searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height);
-            //windowScreenshot.Save(@"C:\Users\Injoy\Desktop\draw.png");
+            
+            windowScreenshot.UnlockBits(parentImageData);
+            this.image.UnlockBits(subImageData);
 
             windowScreenshot.Dispose();
-            image.Dispose();
 
             if (result.Length != 0)
             {

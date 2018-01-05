@@ -28,12 +28,16 @@ namespace LOLBot
             if(clientIntPtr != IntPtr.Zero)
             {
                 clientWindow = new Window(clientIntPtr);
+                clientWindow.SetWindowTopmost();
+
                 StartInTeamRoomThreadThread();
             }
         }
 
         public static void Stop()
         {
+            clientWindow.SetWindowNoTopmost();
+
             if (inTeamRoomThread != null)
                 inTeamRoomThread.Abort();
 
@@ -84,13 +88,8 @@ namespace LOLBot
 
             while (true)
             {
-                Thread.Sleep(4000);
-
-                if (!clientHandle.CanHandle())
-                {
-                    break;
-                }
-                
+                Thread.Sleep(1000);
+               
                 if (clientHandle.IsInQueue())
                 { //在队列中
                     StartInQueueThread();
@@ -112,8 +111,6 @@ namespace LOLBot
                         break;
                     }
                 }
-
-                Thread.Sleep(4000);
             }
 
             Console.WriteLine("inTeamRoom 结束");
@@ -129,12 +126,7 @@ namespace LOLBot
 
             while (true)
             {
-                Thread.Sleep(4000);
-
-                if (!clientHandle.CanHandle())
-                {
-                    break;
-                }
+                Thread.Sleep(2000);
                 
                 if (clientHandle.IsInQueue())
                 { //在队列中
@@ -179,11 +171,7 @@ namespace LOLBot
             while (true)
             {
                 Thread.Sleep(3000);
-
-                if (!clientHandle.CanHandle())
-                {
-                    break;
-                }
+                
 
                 if (clientHandle.GetEditRuneBotton().IsEmpty)
                 {//找不到编辑符文按钮

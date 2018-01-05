@@ -23,12 +23,7 @@ namespace LOLBot
             this.window = window;
             mouseController = new MouseController();
         }
-
-        public void CanHandle()
-        {
-            User32.ShowWindow(window.windowHandle, User32.SW_RESTORE);
-        }
-
+        
         public void Click(Point point)
         {
             User32.SetForegroundWindow(window.windowHandle);

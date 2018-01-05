@@ -64,6 +64,25 @@
             return User32.GetParent(this.windowHandle);
         }
 
+        public bool IsIconic()
+        {
+            return User32.IsIconic(windowHandle);
+        }
+
+        public void SetWindowTopmost()
+        {
+            if (IsIconic())
+            {
+                User32.ShowWindow(windowHandle, User32.SW_RESTORE);
+            }
+            User32.SetWindowPos(windowHandle, User32.HWND_TOPMOST, 1, 1, 1, 1, User32.SWP_NOMOVE | User32.SWP_NOSIZE);
+        }
+
+        public void SetWindowNoTopmost()
+        {
+            User32.SetWindowPos(windowHandle, User32.HWND_NOTOPMOST, 1, 1, 1, 1, User32.SWP_NOMOVE | User32.SWP_NOSIZE);
+        }
+
         private static ImageCodecInfo GetEncoderInfo(String mimeType)
         {
             
