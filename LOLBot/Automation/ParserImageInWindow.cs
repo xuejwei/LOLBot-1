@@ -46,6 +46,7 @@ namespace Automation
             sw.Stop();
 
             windowScreenshot.Dispose();
+            image.Dispose();
             //windowScreenshot.UnlockBits(parentImageData);
             //Graphics g = Graphics.FromImage(windowScreenshot);
             //g.DrawRectangle(new Pen(Color.Red, 1), searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height);
@@ -99,6 +100,7 @@ namespace Automation
             //windowScreenshot.Save(@"C:\Users\Injoy\Desktop\draw.png");
 
             windowScreenshot.Dispose();
+            image.Dispose();
 
             if (result.Length != 0)
             {
