@@ -16,19 +16,19 @@ namespace Automation
         /// <returns></returns>
         public unsafe Rectangle[] Match(BitmapData parentImage, BitmapData subImage, Rectangle searchRect)
         {
-            List<Rectangle> List = new List<Rectangle>();
+            List<Rectangle> list = new List<Rectangle>();
             int parentStride = parentImage.Stride;
             int subStride = subImage.Stride;
             IntPtr parentIptr = parentImage.Scan0;
             IntPtr subIptr = subImage.Scan0;
             byte* parentPtr;
             byte* subPtr;
-            bool IsOk = false;
-            int _BreakW = searchRect.X + searchRect.Width - subImage.Width + 1;
-            int _BreakH = searchRect.Y + searchRect.Height - subImage.Height + 1;
-            for (int h = searchRect.Y; h < _BreakH; h++)
+            bool isOk = false;
+            int breakW = searchRect.X + searchRect.Width - subImage.Width + 1;
+            int breakH = searchRect.Y + searchRect.Height - subImage.Height + 1;
+            for (int h = searchRect.Y; h < breakH; h++)
             {
-                for (int w = searchRect.X; w < _BreakW; w++)
+                for (int w = searchRect.X; w < breakW; w++)
                 {
                     subPtr = (byte*)(subIptr);
                     for (int y = 0; y < subImage.Height; y++)
@@ -37,26 +37,33 @@ namespace Automation
                         {
                             parentPtr = (byte*)((IntPtr)parentIptr + parentStride * (h + y) + (w + x) * 3);
                             subPtr = (byte*)((IntPtr)subIptr + subStride * y + x * 3);
-                            if (parentPtr[0] == subPtr[0] && parentPtr[1] == subPtr[1] && parentPtr[2] == subPtr[2])
+                            try
                             {
-                                IsOk = true;
+                                if (parentPtr[0] == subPtr[0] && parentPtr[1] == subPtr[1] && parentPtr[2] == subPtr[2])
+                                {
+                                    isOk = true;
+                                }
+                                else
+                                {
+                                    isOk = false;
+                                    break;
+                                }
                             }
-                            else
+                            catch(Exception)
                             {
-                                IsOk = false;
-                                break;
+                                return list.ToArray();
                             }
                         }
-                        if (IsOk == false) { break; }
+                        if (isOk == false) { break; }
                     }
-                    if (IsOk)
+                    if (isOk)
                     {
-                        List.Add(new Rectangle(w, h, subImage.Width, subImage.Height));
+                        list.Add(new Rectangle(w, h, subImage.Width, subImage.Height));
                     }
-                    IsOk = false;
+                    isOk = false;
                 }
             }
-            return List.ToArray();
+            return list.ToArray();
         }
 
         /// <summary>
@@ -69,43 +76,52 @@ namespace Automation
         /// <returns></returns>
         public unsafe Rectangle[] Match(BitmapData parentImage, BitmapData subImage, Rectangle searchRect, int similar)
         {
-            List<Rectangle> List = new List<Rectangle>();
+            List<Rectangle> list = new List<Rectangle>();
             int parentStride = parentImage.Stride;
             int subStride = subImage.Stride;
             IntPtr parentIptr = parentImage.Scan0;
             IntPtr subIptr = subImage.Scan0;
             byte* parentPtr;
             byte* subPtr;
-            bool IsOk = false;
-            int _BreakW = searchRect.X + searchRect.Width - subImage.Width + 1;
-            int _BreakH = searchRect.Y + searchRect.Height - subImage.Height + 1;
-            for (int h = searchRect.Y; h < _BreakH; h++)
+            bool isOk = false;
+            int breakW = searchRect.X + searchRect.Width - subImage.Width + 1;
+            int breakH = searchRect.Y + searchRect.Height - subImage.Height + 1;
+            for (int h = searchRect.Y; h < breakH; h++)
             {
-                for (int w = searchRect.X; w < _BreakW; w++)
+                for (int w = searchRect.X; w < breakW; w++)
                 {
                     subPtr = (byte*)(subIptr);
                     for (int y = 0; y < subImage.Height; y++)
                     {
                         for (int x = 0; x < subImage.Width; x++)
                         {
-                            parentPtr = (byte*)((int)parentIptr + parentStride * (h + y) + (w + x) * 3);
-                            subPtr = (byte*)((int)subIptr + subStride * y + x * 3);
-                            if (ColorEqual(parentPtr[0], parentPtr[1], parentPtr[2], subPtr[0], subPtr[1], subPtr[2], similar))  //比较颜色
+                            parentPtr = (byte*)((IntPtr)parentIptr + parentStride * (h + y) + (w + x) * 3);
+                            subPtr = (byte*)((IntPtr)subIptr + subStride * y + x * 3);
+                            try
                             {
-                                IsOk = true;
+                                if (ColorEqual(parentPtr[0], parentPtr[1], parentPtr[2], subPtr[0], subPtr[1], subPtr[2], similar))  //比较颜色
+                                {
+                                    isOk = true;
+                                }
+                                else
+                                {
+                                    isOk = false; break;
+                                }
                             }
-                            else
+                            catch (Exception)
                             {
-                                IsOk = false; break;
+                                return list.ToArray();
                             }
+
+                            
                         }
-                        if (IsOk == false) { break; }
+                        if (isOk == false) { break; }
                     }
-                    if (IsOk) { List.Add(new Rectangle(w, h, subImage.Width, subImage.Height)); }
-                    IsOk = false;
+                    if (isOk) { list.Add(new Rectangle(w, h, subImage.Width, subImage.Height)); }
+                    isOk = false;
                 }
             }
-            return List.ToArray();
+            return list.ToArray();
         }
 
         /// <summary>
@@ -118,41 +134,50 @@ namespace Automation
         /// <returns></returns>
         public unsafe Rectangle[] Match(BitmapData parentImage, BitmapData subImage, Rectangle searchRect, Color excludeColor, int similar)
         {
-            List<Rectangle> List = new List<Rectangle>();
-            int[,] PixelData = GetPixelData(subImage, excludeColor);
-            int Len = PixelData.GetLength(0);
+            List<Rectangle> list = new List<Rectangle>();
+            int[,] pixelData = GetPixelData(subImage, excludeColor);
+            int len = pixelData.GetLength(0);
             int parentStride = parentImage.Stride;
             int subStride = subImage.Stride;
             IntPtr parentIptr = parentImage.Scan0;
             IntPtr subIptr = subImage.Scan0;
             byte* parentPtr;
             byte* subPtr;
-            bool IsOk = false;
-            int _BreakW = searchRect.X + searchRect.Width - subImage.Width + 1;
-            int _BreakH = searchRect.Y + searchRect.Height - subImage.Height + 1;
+            bool isOk = false;
+            int breakW = searchRect.X + searchRect.Width - subImage.Width + 1;
+            int breakH = searchRect.Y + searchRect.Height - subImage.Height + 1;
 
-            for (int h = searchRect.Y; h < _BreakH; h++)
+            for (int h = searchRect.Y; h < breakH; h++)
             {
-                for (int w = searchRect.X; w < _BreakW; w++)
+                for (int w = searchRect.X; w < breakW; w++)
                 {
-                    for (int i = 0; i < Len; i++)
+                    for (int i = 0; i < len; i++)
                     {
-                        parentPtr = (byte*)((IntPtr)parentIptr + parentStride * (h + PixelData[i, 1]) + (w + PixelData[i, 0]) * 3);
-                        subPtr = (byte*)((IntPtr)subIptr + subStride * PixelData[i, 1] + PixelData[i, 0] * 3);
-                        if (ColorEqual(parentPtr[0], parentPtr[1], parentPtr[2], subPtr[0], subPtr[1], subPtr[2], similar))  //比较颜色
+                        parentPtr = (byte*)((IntPtr)parentIptr + parentStride * (h + pixelData[i, 1]) + (w + pixelData[i, 0]) * 3);
+                        subPtr = (byte*)((IntPtr)subIptr + subStride * pixelData[i, 1] + pixelData[i, 0] * 3);
+                        try
                         {
-                            IsOk = true;
+                            if (ColorEqual(parentPtr[0], parentPtr[1], parentPtr[2], subPtr[0], subPtr[1], subPtr[2], similar))  //比较颜色
+                            {
+                                isOk = true;
+                            }
+                            else
+                            {
+                                isOk = false; break;
+                            }
                         }
-                        else
+                        catch (Exception)
                         {
-                            IsOk = false; break;
+                            return list.ToArray();
                         }
+
+                        
                     }
-                    if (IsOk) { List.Add(new Rectangle(w, h, subImage.Width, subImage.Height)); }
-                    IsOk = false;
+                    if (isOk) { list.Add(new Rectangle(w, h, subImage.Width, subImage.Height)); }
+                    isOk = false;
                 }
             }
-            return List.ToArray();
+            return list.ToArray();
         }
 
         private static unsafe int[,] GetPixelData(BitmapData P_Data, Color BackColor)
@@ -168,7 +193,7 @@ namespace Automation
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    P_ptr = (byte*)((int)P_Iptr + P_stride * y + x * 3);
+                    P_ptr = (byte*)((IntPtr)P_Iptr + P_stride * y + x * 3);
                     if (B == P_ptr[0] & G == P_ptr[1] & R == P_ptr[2])
                     {
 

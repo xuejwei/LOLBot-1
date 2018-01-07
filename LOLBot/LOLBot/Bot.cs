@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 using Automation;
 using Automation.WinApi;
-using Automation.DD;
 
 namespace LOLBot
 {
@@ -16,27 +13,36 @@ namespace LOLBot
         static Thread inTeamRoomThread;
         static Thread inQueueThread;
         static Thread chooseChampionThread;
+        static Thread loadingGameThread;
+        
+        static ClientHandle clientHandle;
+        static GameHandle gameHandle;
 
-        static IntPtr clientIntPtr;
-
-        static Window clientWindow;
-
-        public static void Start()
+        public static bool Start()
         {
-            clientIntPtr = User32.FindWindow("RCLIENT", "League of Legends");
+            IntPtr clientIntPtr = User32.FindWindow("RCLIENT", "League of Legends");
 
             if(clientIntPtr != IntPtr.Zero)
             {
-                clientWindow = new Window(clientIntPtr);
-                clientWindow.SetWindowTopmost();
+                Window clientWindow = new Window(clientIntPtr);
+                clientHandle = new ClientHandle(clientWindow);
+                clientHandle.SetWindowTopmost();
 
                 StartInTeamRoomThreadThread();
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
         public static void Stop()
         {
-            clientWindow.SetWindowNoTopmost();
+            if(clientHandle != null)
+            {
+                clientHandle.CancelWindowTopmost();
+            }
 
             if (inTeamRoomThread != null)
                 inTeamRoomThread.Abort();
@@ -46,6 +52,11 @@ namespace LOLBot
 
             if (chooseChampionThread != null)
                 chooseChampionThread.Abort();
+
+            if (loadingGameThread != null)
+            {
+                loadingGameThread.Abort();
+            }
         }
 
         /// <summary>
@@ -75,6 +86,15 @@ namespace LOLBot
             chooseChampionThread.Start();
         }
 
+        /// <summary>
+        /// 处理加载游戏过程
+        /// </summary>
+        private static void StartLoadingGameThread()
+        {
+            loadingGameThread = new Thread(new ThreadStart(LoadingGame));
+            loadingGameThread.Start();
+        }
+
         /////////////////////////////////////////////////////////
 
         #region 事件处理
@@ -84,33 +104,39 @@ namespace LOLBot
         public static void inTeamRoom()
         {
             Console.WriteLine("inTeamRoom 开始");
-            ClientHandle clientHandle = new ClientHandle(clientWindow);
 
-            while (true)
+            if (clientHandle.Running())
             {
-                Thread.Sleep(1000);
-               
-                if (clientHandle.IsInQueue())
-                { //在队列中
-                    StartInQueueThread();
-                    break;
-                }
-                else
-                { //不在队列中
-                    if (clientHandle.InTeamRoom())
-                    { //是在房间中
-                        //开始游戏
-                        clientHandle.QueueUp();
+                while (clientHandle.IsNotMinimize())
+                {
+                    Thread.Sleep(1000);
 
+                    if (clientHandle.IsInQueue())
+                    { //在队列中
                         StartInQueueThread();
                         break;
                     }
                     else
-                    {
-                        StartChooseChampionThread();
-                        break;
+                    { //不在队列中
+                        if (clientHandle.InTeamRoom())
+                        { //是在房间中
+                          //开始游戏
+                            clientHandle.QueueUp();
+
+                            StartInQueueThread();
+                            break;
+                        }
+                        else
+                        {
+                            StartChooseChampionThread();
+                            break;
+                        }
                     }
                 }
+            }
+            else
+            {
+                //重新开始游戏
             }
 
             Console.WriteLine("inTeamRoom 结束");
@@ -122,41 +148,47 @@ namespace LOLBot
         public static void inQueue()
         {
             Console.WriteLine("inQueue 开始");
-            ClientHandle clientHandle = new ClientHandle(clientWindow);
 
-            while (true)
+            if (clientHandle.Running())
             {
-                Thread.Sleep(2000);
-                
-                if (clientHandle.IsInQueue())
-                { //在队列中
+                while (clientHandle.IsNotMinimize())
+                {
+                    Thread.Sleep(2000);
 
-                    if (clientHandle.Accept())
-                    { //点击接受游戏
-                        Thread.Sleep(10000);
+                    if (clientHandle.IsInQueue())
+                    { //在队列中
 
-                        StartChooseChampionThread();
-                        break;
-                    }
-                }
-                else
-                { //不在队列中
-                    if(clientHandle.GetEditRuneBotton().IsEmpty)
-                    {//不在选择英雄界面
-                        //回到队伍房间事件处理
-                        StartInTeamRoomThreadThread();
-                        break;
+                        if (clientHandle.Accept())
+                        { //点击接受游戏
+                            Thread.Sleep(10000);
+
+                            StartChooseChampionThread();
+                            break;
+                        }
                     }
                     else
-                    {
-                        StartChooseChampionThread();
-                        break;
+                    { //不在队列中
+                        if (clientHandle.GetEditRuneBotton().IsEmpty)
+                        {//不在选择英雄界面
+                         //回到队伍房间事件处理
+                            StartInTeamRoomThreadThread();
+                            break;
+                        }
+                        else
+                        {
+                            StartChooseChampionThread();
+                            break;
+                        }
                     }
+
+                    Thread.Sleep(4000);
                 }
-
-                Thread.Sleep(4000);
             }
-
+            else
+            {
+                //重开游戏
+            }
+            
             Console.WriteLine("inQueue 结束");
         }
 
@@ -166,47 +198,72 @@ namespace LOLBot
         public static void chooseChampion()
         {
             Console.WriteLine("chooseChampion 开始");
-            ClientHandle clientHandle = new ClientHandle(clientWindow);
 
-            while (true)
+            if (clientHandle.Running())
             {
-                Thread.Sleep(3000);
-                
+                while (clientHandle.IsNotMinimize())
+                {
+                    Thread.Sleep(3000);
 
-                if (clientHandle.GetEditRuneBotton().IsEmpty)
-                {//找不到编辑符文按钮
-                    StartInQueueThread();
-                    break;
-                }
-                else
-                {//在选择英雄界面
-                    if(clientHandle.DidChoosedChampion())
-                    {//已经选择英雄
+                    if (clientHandle.GetEditRuneBotton().IsEmpty)
+                    {//找不到编辑符文按钮
+                        if (Process.GetProcessesByName("League of Legends").ToList().Count > 0)
+                        {
+                            //存在
+                            IntPtr gameIntPtr = User32.FindWindow("RiotWindowClass", "League of Legends (TM) Client");
+                            Window gameWindow = new Window(gameIntPtr);
+                            gameHandle = new GameHandle(gameWindow);
+                            StartLoadingGameThread();
+                        }
+                        else
+                        {
+                            //不存在游戏进程，返回队列处理事件
+                            StartInQueueThread();
+                        }
                         break;
                     }
+                    else
+                    {//在选择英雄界面
+                        if (clientHandle.DidChoosedChampion())
+                        {//已经选择英雄
+                            continue;
+                        }
 
-                    if(clientHandle.RandomlyChooseChampion())
-                    {//随机选择一个英雄
-                        Thread.Sleep(2000);
-                        if(clientHandle.LockInChampion())
-                        {
-                            //一直判断这个界面
-                            StartChooseChampionThread();
-                            return;
+                        if (clientHandle.RandomlyChooseChampion())
+                        {//随机选择一个英雄
+                            Thread.Sleep(2000);
+                            if (clientHandle.LockInChampion())
+                            {//处理下一步
+                                continue;
+                            }
+                        }
+                        else
+                        {// 没有英雄可以选择
+                         //清空搜索
                         }
                     }
-                    else
-                    {// 没有英雄可以选择
-                        //清空搜索
-                    }
+
+                    Thread.Sleep(3000);
                 }
-
-                Thread.Sleep(3000);
             }
-
+            else
+            {
+                //重开游戏
+            }
+            
             Console.WriteLine("chooseChampion 结束");
         }
 
+        /// <summary>
+        /// 处理加载游戏
+        /// </summary>
+        public static void LoadingGame()
+        {
+            Console.WriteLine("LoadingGame 开始");
+
+
+            Console.WriteLine("LoadingGame 结束");
+        }
     }
     #endregion
 }

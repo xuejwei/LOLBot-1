@@ -61,10 +61,6 @@ namespace Automation
 
             windowScreenshot.UnlockBits(parentImageData);
             this.image.UnlockBits(subImageData);
-
-            Graphics g = Graphics.FromImage(windowScreenshot);
-            g.DrawRectangle(new Pen(Color.Red, 1), searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height);
-            windowScreenshot.Save(@"C:\Users\Injoy\Desktop\draw.png");
             
             windowScreenshot.Dispose();
 
@@ -112,6 +108,14 @@ namespace Automation
             
             windowScreenshot.UnlockBits(parentImageData);
             this.image.UnlockBits(subImageData);
+
+            //Graphics g = Graphics.FromImage(windowScreenshot);
+            //g.DrawRectangle(new Pen(Color.Red, 1), searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height);
+            //foreach (Rectangle rect in result)
+            //{
+            //    g.DrawRectangle(new Pen(Color.Red, 1), rect.X, rect.Y, rect.Width, rect.Height);
+            //}
+            //windowScreenshot.Save(@"C:\Users\Injoy\Desktop\draw.png");
 
             windowScreenshot.Dispose();
 

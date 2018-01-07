@@ -26,12 +26,65 @@ namespace LOLBot
         
         public void Click(Point point)
         {
-            User32.SetForegroundWindow(window.windowHandle);
+            if (Running())
+            {
+                User32.SetForegroundWindow(window.windowHandle);
 
-            mouseController.Move(new Point(point.X + this.window.Rect.X, point.Y + this.window.Rect.Y));
-            DDutil.getInstance().btn((int)MouseBtn.左下);
-            new Random().Next(50, 150);
-            DDutil.getInstance().btn((int)MouseBtn.左上);
+                mouseController.Move(new Point(point.X + this.window.Rect.X, point.Y + this.window.Rect.Y));
+                DDutil.getInstance().btn((int)MouseBtn.左下);
+                new Random().Next(50, 150);
+                DDutil.getInstance().btn((int)MouseBtn.左上);
+            }
+        }
+
+        public bool Running()
+        {
+            if (window.GetWindowThreadProcessId() != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 是非最小化状态
+        /// </summary>
+        /// <returns></returns>
+        public bool IsNotMinimize()
+        {
+            if(window.IsIconic())
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 设置置顶
+        /// </summary>
+        public void SetWindowTopmost()
+        {
+            if(Running())
+            {
+                window.SetWindowTopmost();
+            }
+        }
+
+        /// <summary>
+        /// 取消置顶
+        /// </summary>
+        public void CancelWindowTopmost()
+        {
+            if (Running())
+            {
+                window.SetWindowNoTopmost();
+            }
         }
     }
 }

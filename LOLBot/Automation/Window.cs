@@ -40,6 +40,8 @@
 
         public Bitmap Capture()
         {
+            if (GetWindowThreadProcessId() == 0) return new Bitmap(1, 1, PixelFormat.Format24bppRgb);
+
             var deviceSrc = User32.GetWindowDC(this.windowHandle);
             User32.GetWindowRect(this.windowHandle, ref this.rect);
             var deviceDest = Gdi32.CreateCompatibleDC(deviceSrc);
@@ -57,6 +59,13 @@
             Gdi32.DeleteObject(bitmapHandle);
           
             return img;
+        }
+
+        public uint GetWindowThreadProcessId()
+        {
+            uint pid;
+            User32.GetWindowThreadProcessId(windowHandle, out pid);
+            return pid;
         }
 
         public IntPtr GetParentHandle()
