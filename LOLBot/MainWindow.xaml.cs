@@ -115,7 +115,7 @@ namespace LOLBot
 
         private void stopBot()
         {
-            Bot.Stop();
+            Bot.Stop(null);
             //注册开始的热键，并解绑其他热键
             bool regF9 = User32.RegisterHotKey(interopHelper.Handle, 233, 0, (int)Keys.F9);
             User32.UnregisterHotKey(interopHelper.Handle, 4843);

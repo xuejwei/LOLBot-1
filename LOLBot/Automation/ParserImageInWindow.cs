@@ -14,7 +14,7 @@ namespace Automation
     {
         private readonly Bitmap image;
         public readonly Window window;
-        private readonly Rectangle searchZone;
+        private Rectangle searchZone;
 
         public Target[] parserResult;
 
@@ -53,6 +53,7 @@ namespace Automation
 
             BitmapData parentImageData = windowScreenshot.LockBits(new Rectangle(0, 0, windowScreenshot.Width, windowScreenshot.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             BitmapData subImageData = this.image.LockBits(new Rectangle(0, 0, this.image.Width, this.image.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            searchZone = ProcessSearchZone(parentImageData.Width, parentImageData.Height);
 
             Stopwatch sw = new Stopwatch();
             sw.Start(); //计时开始
@@ -88,10 +89,11 @@ namespace Automation
         public bool FindInWindow(Color excludeColor, int similarity = 0)
         {
             Bitmap windowScreenshot = this.window.Capture();
-
+            
             BitmapData parentImageData = windowScreenshot.LockBits(new Rectangle(0, 0, windowScreenshot.Width, windowScreenshot.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             BitmapData subImageData = this.image.LockBits(new Rectangle(0, 0, this.image.Width, this.image.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            
+            searchZone = ProcessSearchZone(parentImageData.Width, parentImageData.Height);
+
             Rectangle[] result;
 
             Stopwatch sw = new Stopwatch();
@@ -164,6 +166,30 @@ namespace Automation
             {
                 return null;
             }
+        }
+
+        private Rectangle ProcessSearchZone(int maxWidth, int maxHeight)
+        {
+            Rectangle rect = new Rectangle(searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height);
+            if (maxWidth < rect.X + rect.Width)
+            {
+                int newWidth, newX;
+
+                newX = maxWidth < rect.X ? maxWidth : rect.X;
+                newWidth = maxWidth - newX;
+                rect = new Rectangle(newX, rect.Y, newWidth, rect.Height);
+            }
+
+            if (maxHeight < rect.Y + rect.Height)
+            {
+                int newHeight, newY;
+
+                newY = maxHeight < rect.Y ? maxHeight : rect.Y;
+                newHeight = maxHeight - newY;
+                rect = new Rectangle(rect.X, newY, rect.Width, newHeight);
+            }
+
+            return rect;
         }
 
 

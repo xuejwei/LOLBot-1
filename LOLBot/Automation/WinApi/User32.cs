@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.InteropServices;
     using Structs;
-
+    using System.Windows.Forms;
     /// <summary>
     /// Contains PInvoke signatures for user32.dll functions.
     /// </summary>
@@ -56,6 +56,9 @@
 
         [DllImport("user32.dll")]
         public static extern void mouse_event(uint flags, int x, int y, int data, int extraInfo);
+
+        [DllImport("user32.dll", EntryPoint = "keybd_event", SetLastError = true)]
+        public static extern void keybd_event(Keys bVk, byte bScan, uint dwFlags, uint dwExtraInfo);
 
         [DllImport("user32.dll")]
         public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr dc);

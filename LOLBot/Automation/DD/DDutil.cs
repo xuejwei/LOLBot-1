@@ -7,6 +7,15 @@ using System.Security.Principal;
 
 namespace Automation.DD
 {
+    public enum DDKeys
+    {
+        F1 = 101,
+        F2 = 102,
+        F3 = 103,
+        F4 = 104,
+        F5 = 105
+    }
+
     class DDutil
     {
         private static CDD dd;
