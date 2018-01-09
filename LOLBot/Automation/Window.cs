@@ -34,8 +34,12 @@
 
         public Rect Rect
         {
-            get { return this.rect; }
-            set { this.rect = value; }
+            get
+            {
+                Rect rect = new Rect();
+                User32.GetWindowRect(this.windowHandle, ref rect);
+                return rect;
+            }
         }
 
         public Bitmap Capture()
@@ -59,6 +63,11 @@
             Gdi32.DeleteObject(bitmapHandle);
           
             return img;
+        }
+
+        public void Move(Rectangle rect)
+        {
+            User32.MoveWindow(windowHandle, rect.X, rect.Y, rect.Width, rect.Height, false);
         }
 
         /// <summary>

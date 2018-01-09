@@ -4,6 +4,8 @@ using Automation;
 using System.Drawing;
 using Automation.WinApi;
 using Automation.DD;
+using Automation;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace LOLBot
@@ -25,7 +27,7 @@ namespace LOLBot
             Bitmap playerFrame = Properties.Resources.PlayerFrame;
             ParserImageInWindow parser = new ParserImageInWindow(playerFrame, base.window, new Rectangle(116, 420, 1055, 376));
 
-            bool found = parser.FindInWindow(Color.White, 50);
+            bool found = parser.FindInWindow(Color.White, 50) != 0;
             parser.Dispose();
 
             if (found) return true; else return false;
@@ -40,23 +42,75 @@ namespace LOLBot
             Bitmap walkMark = Properties.Resources.WalkMark;
             ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(430, 770, 64, 32));
 
-            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 50);
+            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 50) != 0;
             parser.Dispose();
 
             if (found) return true; else return false;
         }
 
-        public bool IsWalking()
+        /// <summary>
+        /// 获取当前走动标记图片的位置。
+        /// </summary>
+        /// <returns></returns>
+        public Point GetNowWalkMarkPoint()
         {
-            Bitmap walkMark = lastWalkMark == null ? Properties.Resources.WalkMark : lastWalkMark;
+            Bitmap walkMark = Properties.Resources.WalkMark;
             ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(430, 770, 64, 32));
 
-            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 50);
+            int count = parser.FindInWindow(Color.FromArgb(255, 0, 255), 50, true);
             parser.Dispose();
-            if (found)
+            if(count > 0)
             {
                 Target target = parser.GetATarget();
+                
+                return target.rect.Location ;
+            }
+            else
+            {
+                return Point.Empty;
+            }
+        }
 
+        /// <summary>
+        /// 更新标记
+        /// </summary>
+        /// <param name="markPoint">标记坐标</param>
+        public void UpdateLastWalkMark(Point markPoint)
+        {
+            Bitmap walkMark = Properties.Resources.WalkMark;
+            walkMark.Dispose(); //只是为了获取大小
+
+            Rectangle winRect = window.Rect;
+            Rectangle markRect = new Rectangle(winRect.X + markPoint.X, winRect.Y + markPoint.Y, walkMark.Size.Width, walkMark.Size.Height);
+
+            Bitmap markScreenshot = new Bitmap(markRect.Width, markRect.Height);
+            Graphics g = Graphics.FromImage(markScreenshot);
+            g.CopyFromScreen(markRect.Location, Point.Empty, markRect.Size);
+            g.Dispose();
+            lastWalkMark = markScreenshot;
+        }
+
+        public bool IsWalking(Point markPoint)
+        {
+            if (lastWalkMark == null) return false;
+
+            Rectangle winRect = window.Rect;
+            Rectangle markRect = new Rectangle(winRect.X + markPoint.X, winRect.Y + markPoint.Y, lastWalkMark.Size.Width, lastWalkMark.Size.Height);
+
+            Bitmap nowWalkMark = new Bitmap(markRect.Width, markRect.Height);
+            Graphics g = Graphics.FromImage(nowWalkMark);
+            g.CopyFromScreen(markRect.Location, Point.Empty, markRect.Size);
+            g.Dispose();
+
+            BitmapData parentImageData = lastWalkMark.LockBits(new Rectangle(0, 0, lastWalkMark.Width, lastWalkMark.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            BitmapData subImageData = nowWalkMark.LockBits(new Rectangle(0, 0, nowWalkMark.Width, nowWalkMark.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+            FindImage findImage = new FindImage();
+            int count = findImage.Match(parentImageData, subImageData, new Rectangle(0, 0, lastWalkMark.Width, lastWalkMark.Height)).Length;
+            
+            if (count == 0)
+            {
+                return false;
             }
             else
             {//没找到，说明在走动
@@ -71,6 +125,16 @@ namespace LOLBot
         public void FollowTeammateWithHotkey(DDKeys key)
         {
             DDutil.getInstance().key((int)key, 1);
+            Thread.Sleep(new Random().Next(5, 20));
+        }
+
+        /// <summary>
+        /// 取消跟随
+        /// </summary>
+        /// <param name="key"></param>
+        public void CancelFollowTeammateWithHotkey(DDKeys key)
+        {
+            DDutil.getInstance().key((int)key, 2);
             Thread.Sleep(new Random().Next(5, 20));
         }
 

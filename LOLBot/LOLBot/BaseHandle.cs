@@ -17,7 +17,6 @@ namespace LOLBot
         protected Window window;
 
         private MouseController mouseController;
-        private ParserImageInWindow parser;
 
         public BaseHandle(Window window)
         {

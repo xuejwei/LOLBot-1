@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Timers;
 
 using Automation;
 using Automation.WinApi;
@@ -83,7 +84,6 @@ namespace LOLBot
         {
             inTeamRoomThread = new Thread(new ThreadStart(inTeamRoom));
             inTeamRoomThread.Start();
-            //Stop(inTeamRoomThread);
         }
 
         /// <summary>
@@ -93,7 +93,6 @@ namespace LOLBot
         {
             inQueueThread = new Thread(new ThreadStart(inQueue));
             inQueueThread.Start();
-            //Stop(inQueueThread);
         }
 
         /// <summary>
@@ -103,7 +102,6 @@ namespace LOLBot
         {
             chooseChampionThread = new Thread(new ThreadStart(chooseChampion));
             chooseChampionThread.Start();
-            //Stop(chooseChampionThread);
         }
 
         /// <summary>
@@ -113,7 +111,6 @@ namespace LOLBot
         {
             loadingGameThread = new Thread(new ThreadStart(LoadingGame));
             loadingGameThread.Start();
-            //Stop(loadingGameThread);
         }
 
         /// <summary>
@@ -134,10 +131,10 @@ namespace LOLBot
         public static void inTeamRoom()
         {
             Console.WriteLine("inTeamRoom 开始");
-
+            
             if (clientHandle.Running())
             {
-                while (clientHandle.IsNotMinimize())
+                while (true)
                 {
                     Thread.Sleep(1000);
 
@@ -181,7 +178,7 @@ namespace LOLBot
 
             if (clientHandle.Running())
             {
-                while (clientHandle.IsNotMinimize())
+                while (true)
                 {
                     Thread.Sleep(2000);
 
@@ -232,7 +229,7 @@ namespace LOLBot
             if (clientHandle.Running())
             {
                 bool isLockInChampion = false;
-                while (clientHandle.IsNotMinimize())
+                while (true)
                 {
                     Thread.Sleep(3000);
 
@@ -351,22 +348,18 @@ namespace LOLBot
             
             if(gameHandle != null)
             {
-                while(gameHandle.IsNotMinimize())
+                while(true)
                 {
-                    Thread.Sleep(5000);
-
-                    if (gameHandle.InLoadingGame())
-                    {//载入游戏界面
-                        Console.WriteLine("游戏载入中...");
-                        Thread.Sleep(10000);
-                    }
-                    else if(gameHandle.Playing())
+                    Thread.Sleep(new Random().Next(5000, 8000));
+                    //if (gameHandle.InLoadingGame())
+                    //{//载入游戏界面
+                    //    Console.WriteLine("游戏载入中...");
+                    //    Thread.Sleep(10000);
+                    //}
+                    if (gameHandle.Playing())
                     {//进入游戏
                         StartPlayGameThread();
                         break;
-                    }
-                    else
-                    { //重新连接
                     }
                 }
             }
@@ -379,8 +372,9 @@ namespace LOLBot
             Console.WriteLine("PlayGame 开始");
             if (gameHandle.Running())
             {
-                System.Timers.Timer follow = new System.Timers.Timer(30000);
-                while(gameHandle.Running())
+                System.Timers.Timer follow = new System.Timers.Timer(5000);
+                follow.Elapsed += new ElapsedEventHandler(CancelFollowTeammate); ;
+                while (gameHandle.Running())
                 {
                     if(gameHandle.CanexecuteUserEvent())
                     {
@@ -401,6 +395,17 @@ namespace LOLBot
         {
             gameHandle.FollowTeammateWithHotkey(Automation.DD.DDKeys.F1);
             gameHandle.FollowTeammateWithHotkey(Automation.DD.DDKeys.F2);
+        }
+
+        /// <summary>
+        /// 取消跟随
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void CancelFollowTeammate(object sender, ElapsedEventArgs e)
+        {
+            gameHandle.CancelFollowTeammateWithHotkey(Automation.DD.DDKeys.F1);
+            gameHandle.CancelFollowTeammateWithHotkey(Automation.DD.DDKeys.F2);
         }
 
         public static void IsWalking()

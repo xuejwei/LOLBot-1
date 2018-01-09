@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using Automation.WinApi;
 
 namespace Automation
 {
@@ -44,12 +42,38 @@ namespace Automation
             }
         }
 
+        private Bitmap getWindowScreenshot(bool useDesktopCapture)
+        {
+            Bitmap windowScreenshot;
+            if (useDesktopCapture)
+            {
+                if(window.IsIconic())
+                {
+                    return new Bitmap(1, 1, PixelFormat.Format24bppRgb);
+                } 
+
+                Rectangle winRect = window.Rect;
+                winRect.X = 0; winRect.Y = 0;
+                window.Move(new Rectangle(0, 0, winRect.Width, winRect.Height));
+                
+                windowScreenshot = new Bitmap(winRect.Width, winRect.Height);
+                Graphics g = Graphics.FromImage(windowScreenshot);
+                g.CopyFromScreen(winRect.Location, Point.Empty, winRect.Size);
+                g.Dispose();
+            }
+            else
+            {
+                windowScreenshot = this.window.Capture();
+            }
+            return windowScreenshot;
+        }
+
         /// <summary>
         ///  是否能在窗口中找到这个图片
         /// </summary>
-        public bool FindInWindow()
+        public int FindInWindow(bool useDesktopCapture = false)
         {
-            Bitmap windowScreenshot = this.window.Capture();
+            Bitmap windowScreenshot = getWindowScreenshot(useDesktopCapture);
 
             BitmapData parentImageData = windowScreenshot.LockBits(new Rectangle(0, 0, windowScreenshot.Width, windowScreenshot.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             BitmapData subImageData = this.image.LockBits(new Rectangle(0, 0, this.image.Width, this.image.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
@@ -65,19 +89,12 @@ namespace Automation
             
             windowScreenshot.Dispose();
 
-            if (result.Length != 0)
+            this.parserResult = new Target[result.Length];
+            for (int i = 0; i < result.Length; i++)
             {
-                parserResult = new Target[result.Length];
-                for (int i = 0; i < result.Length; i++)
-                {
-                    parserResult[i] = new Target(result[i], 1);
-                }
-                return true;
+                this.parserResult[i] = new Target(result[i], 1);
             }
-            else
-            {
-                return false;
-            }
+            return result.Length;
         }
 
         /// <summary>
@@ -86,10 +103,10 @@ namespace Automation
         /// <param name="similarity">容错值</param>
         /// <param name="excludeColor">排除的颜色</param>
         /// <returns></returns>
-        public bool FindInWindow(Color excludeColor, int similarity = 0)
+        public int FindInWindow(Color excludeColor, int similarity = 0, bool useDesktopCapture = false)
         {
-            Bitmap windowScreenshot = this.window.Capture();
-            
+            Bitmap windowScreenshot = getWindowScreenshot(useDesktopCapture);
+
             BitmapData parentImageData = windowScreenshot.LockBits(new Rectangle(0, 0, windowScreenshot.Width, windowScreenshot.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             BitmapData subImageData = this.image.LockBits(new Rectangle(0, 0, this.image.Width, this.image.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             searchZone = ProcessSearchZone(parentImageData.Width, parentImageData.Height);
@@ -111,29 +128,25 @@ namespace Automation
             windowScreenshot.UnlockBits(parentImageData);
             this.image.UnlockBits(subImageData);
 
-            //Graphics g = Graphics.FromImage(windowScreenshot);
-            //g.DrawRectangle(new Pen(Color.Red, 1), searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height);
-            //foreach (Rectangle rect in result)
+            //if (useDesktopCapture)
             //{
-            //    g.DrawRectangle(new Pen(Color.Red, 1), rect.X, rect.Y, rect.Width, rect.Height);
+            //    Graphics g = Graphics.FromImage(windowScreenshot);
+            //    g.DrawRectangle(new Pen(Color.Red, 1), searchZone.X, searchZone.Y, searchZone.Width, searchZone.Height);
+            //    foreach (Rectangle rect in result)
+            //    {
+            //        g.DrawRectangle(new Pen(Color.Red, 1), rect.X, rect.Y, rect.Width, rect.Height);
+            //    }
+            //    windowScreenshot.Save(@"C:\Users\Injoy\Desktop\draw.png");
             //}
-            //windowScreenshot.Save(@"C:\Users\Injoy\Desktop\draw.png");
 
             windowScreenshot.Dispose();
 
-            if (result.Length != 0)
+            this.parserResult = new Target[result.Length];
+            for (int i = 0; i < result.Length; i++)
             {
-                parserResult = new Target[result.Length];
-                for (int i = 0; i < result.Length; i++)
-                {
-                    parserResult[i] = new Target(result[i], similarity);
-                }
-                return true;
+                this.parserResult[i] = new Target(result[i], 1);
             }
-            else
-            {
-                return false;
-            }
+            return result.Length;
         }
 
         /// <summary>

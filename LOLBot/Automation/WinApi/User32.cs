@@ -48,8 +48,11 @@
         [DllImport("user32.dll")]
         public static extern IntPtr GetActiveWindow();
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern int MoveWindow(IntPtr hWnd, int x, int y, int nWidth, int nHeight, bool BRePaint);
+
         [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rect rect);
+        public static extern bool GetWindowRect(IntPtr hWnd, ref Rect rect);
 
         [DllImport("user32.dll")]
         public static extern IntPtr LoadCursor(IntPtr instance, int cursor);

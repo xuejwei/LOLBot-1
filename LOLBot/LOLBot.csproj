@@ -170,6 +170,8 @@
     <Content Include="dd74000x64.64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Image\PlayAgain.png" />
+    <Resource Include="Resources\Image\SkipEvaluate.png" />
     <Resource Include="Resources\Image\PlayerFrame.png" />
     <Resource Include="Resources\Image\WalkMark.png" />
     <Resource Include="Resources\Image\WaitingStartGame.png" />
