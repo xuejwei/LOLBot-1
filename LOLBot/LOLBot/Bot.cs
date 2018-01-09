@@ -379,13 +379,17 @@ namespace LOLBot
             Console.WriteLine("PlayGame 开始");
             if (gameHandle.Running())
             {
-                System.Timers.Timer follow = new System.Timers.Timer(20);
-                while(true)
+                System.Timers.Timer follow = new System.Timers.Timer(30000);
+                while(gameHandle.Running())
                 {
-                    FollowTeammate();
-                    Thread.Sleep(1000);
+                    if(gameHandle.CanexecuteUserEvent())
+                    {
+                        FollowTeammate();
+                    }
                 }
-
+                //游戏停止运行
+                follow.Stop();
+                follow.Close();
             }
             Console.WriteLine("PlayGame 结束");
         }

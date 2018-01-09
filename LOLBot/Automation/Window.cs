@@ -61,6 +61,10 @@
             return img;
         }
 
+        /// <summary>
+        /// 获取窗口的进程 ID
+        /// </summary>
+        /// <returns></returns>
         public uint GetWindowThreadProcessId()
         {
             uint pid;
@@ -73,11 +77,33 @@
             return User32.GetParent(this.windowHandle);
         }
 
+        /// <summary>
+        /// 是否是焦点窗口
+        /// </summary>
+        /// <returns></returns>
+        public bool IsActive()
+        {
+            if(windowHandle.ToString() == User32.GetActiveWindow().ToString())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 是否是最小化状态
+        /// </summary>
         public bool IsIconic()
         {
             return User32.IsIconic(windowHandle);
         }
 
+        /// <summary>
+        /// 设置置顶
+        /// </summary>
         public void SetWindowTopmost()
         {
             if (IsIconic())
@@ -87,15 +113,13 @@
             User32.SetWindowPos(windowHandle, User32.HWND_TOPMOST, 1, 1, 1, 1, User32.SWP_NOMOVE | User32.SWP_NOSIZE);
         }
 
+        /// <summary>
+        /// 取消置顶
+        /// </summary>
         public void SetWindowNoTopmost()
         {
             User32.SetWindowPos(windowHandle, User32.HWND_NOTOPMOST, 1, 1, 1, 1, User32.SWP_NOMOVE | User32.SWP_NOSIZE);
         }
-
-        private static ImageCodecInfo GetEncoderInfo(String mimeType)
-        {
-            
-            return null;
-        }
+        
     }
 }

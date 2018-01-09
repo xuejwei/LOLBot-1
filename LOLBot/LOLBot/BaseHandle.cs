@@ -17,6 +17,7 @@ namespace LOLBot
         protected Window window;
 
         private MouseController mouseController;
+        private ParserImageInWindow parser;
 
         public BaseHandle(Window window)
         {
@@ -40,6 +41,22 @@ namespace LOLBot
         public bool Running()
         {
             if (window.GetWindowThreadProcessId() != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 是否可以执行用户事件
+        /// </summary>
+        /// <returns></returns>
+        public bool CanexecuteUserEvent()
+        {
+            if(Running() && window.IsActive())
             {
                 return true;
             }

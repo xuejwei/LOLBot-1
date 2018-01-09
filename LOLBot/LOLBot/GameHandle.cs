@@ -10,6 +10,8 @@ namespace LOLBot
 {
     class GameHandle : BaseHandle
     {
+        private Bitmap lastWalkMark;
+
         public GameHandle(Window window) : base(window)
         {
         }
@@ -44,13 +46,32 @@ namespace LOLBot
             if (found) return true; else return false;
         }
 
+        public bool IsWalking()
+        {
+            Bitmap walkMark = lastWalkMark == null ? Properties.Resources.WalkMark : lastWalkMark;
+            ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(430, 770, 64, 32));
+
+            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 50);
+            parser.Dispose();
+            if (found)
+            {
+                Target target = parser.GetATarget();
+
+            }
+            else
+            {//没找到，说明在走动
+                return true;
+            }
+        }
+
         /// <summary>
-        /// 
+        /// 跟随
         /// </summary>
         /// <param name="key"></param>
         public void FollowTeammateWithHotkey(DDKeys key)
         {
             DDutil.getInstance().key((int)key, 1);
+            Thread.Sleep(new Random().Next(5, 20));
         }
 
 

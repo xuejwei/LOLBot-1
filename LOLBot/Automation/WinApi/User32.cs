@@ -46,6 +46,9 @@
         public static extern IntPtr GetWindowDC(IntPtr hWnd);
 
         [DllImport("user32.dll")]
+        public static extern IntPtr GetActiveWindow();
+
+        [DllImport("user32.dll")]
         public static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rect rect);
 
         [DllImport("user32.dll")]
