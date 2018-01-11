@@ -53,9 +53,9 @@ namespace LOLBot
         /// 是否可以执行用户事件
         /// </summary>
         /// <returns></returns>
-        public bool CanexecuteUserEvent()
+        public bool CanExecuteUserEvent()
         {
-            if(Running() && window.IsActive())
+            if(Running() && window.IsForeground())
             {
                 return true;
             }

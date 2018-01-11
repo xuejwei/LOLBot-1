@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.Drawing;
 using System.Timers;
+using System.Collections.Generic;
 
 using Automation;
 using Automation.WinApi;
@@ -17,33 +18,53 @@ namespace LOLBot
         static Thread chooseChampionThread;
         static Thread loadingGameThread;
         static Thread playGameThread;
+        static Thread gameOverThread;
 
         static ClientHandle clientHandle;
         static GameHandle gameHandle;
 
+        /// <summary>
+        /// 跟随英雄的时钟
+        /// </summary>
+        static System.Timers.Timer follow;
+        static System.Timers.Timer walkCheck;
+
+        static int notWalkingTime = 0;
+
+        static List<Automation.DD.DDKeys> walkKeys = new List<Automation.DD.DDKeys>();
+
         public static bool Start()
         {
+            walkKeys.Add(Automation.DD.DDKeys.F2);
+            walkKeys.Add(Automation.DD.DDKeys.F3);
+            walkKeys.Add(Automation.DD.DDKeys.F4);
+            walkKeys.Add(Automation.DD.DDKeys.F5);
+
             IntPtr clientIntPtr = User32.FindWindow("RCLIENT", "League of Legends");
             IntPtr gameIntPtr = User32.FindWindow("RiotWindowClass", "League of Legends (TM) Client");
 
+            bool runing = false;
             if (gameIntPtr != IntPtr.Zero)
             {
                 Window gameWindow = new Window(gameIntPtr);
                 gameHandle = new GameHandle(gameWindow);
 
                 StartLoadingGameThread();
-                return true;
+                runing = true;
             }
             if (clientIntPtr != IntPtr.Zero)
             {
                 Window clientWindow = new Window(clientIntPtr);
                 clientHandle = new ClientHandle(clientWindow);
-                clientHandle.SetWindowTopmost();
 
-                StartInTeamRoomThreadThread();
-                return true;
+                if (!runing)
+                {
+                    clientHandle.SetWindowTopmost();
+                    StartInTeamRoomThreadThread();
+                    runing = true;
+                }
             }
-            return false;
+            return runing;
         }
 
         /// <summary>
@@ -75,6 +96,9 @@ namespace LOLBot
 
             if (playGameThread != null && excludeThread != playGameThread)
                 playGameThread.Abort();
+
+            if (follow != null) follow.Close();
+            if (walkCheck != null) walkCheck.Close();
         }
 
         /// <summary>
@@ -82,7 +106,7 @@ namespace LOLBot
         /// </summary>
         private static void StartInTeamRoomThreadThread()
         {
-            inTeamRoomThread = new Thread(new ThreadStart(inTeamRoom));
+            inTeamRoomThread = new Thread(new ThreadStart(InTeamRoom));
             inTeamRoomThread.Start();
         }
 
@@ -91,7 +115,7 @@ namespace LOLBot
         /// </summary>
         private static void StartInQueueThread()
         {
-            inQueueThread = new Thread(new ThreadStart(inQueue));
+            inQueueThread = new Thread(new ThreadStart(InQueue));
             inQueueThread.Start();
         }
 
@@ -100,7 +124,7 @@ namespace LOLBot
         /// </summary>
         private static void StartChooseChampionThread()
         {
-            chooseChampionThread = new Thread(new ThreadStart(chooseChampion));
+            chooseChampionThread = new Thread(new ThreadStart(ChooseChampion));
             chooseChampionThread.Start();
         }
 
@@ -122,13 +146,57 @@ namespace LOLBot
             playGameThread.Start();
         }
 
+        /// <summary>
+        /// 处理游戏结束事件
+        /// </summary>
+        private static void StartGameOverThread()
+        {
+            gameOverThread = new Thread(new ThreadStart(GameOver));
+            gameOverThread.Start();
+        }
         /////////////////////////////////////////////////////////
 
         #region 事件处理
+        public static void GameOver()
+        {
+            Console.WriteLine("GameOver 开始");
+            if (clientHandle.Running())
+            {
+                while (true)
+                {
+                    Thread.Sleep(2000);
+                    if(clientHandle.SkipEvaluate())
+                    {//点击跳过评价
+                        continue;
+                    }
+                    else if(clientHandle.PlayAgain())
+                    {//点击再来一次
+                        StartInTeamRoomThreadThread();
+                        break;
+                    }
+                    else if(clientHandle.InTeamRoom())
+                    {//已经在队伍房间中
+                        StartInTeamRoomThreadThread();
+                        break;
+                    }
+                    else if(!clientHandle.GetEditRuneBotton().IsEmpty)
+                    {//已经在选择英雄
+                        StartChooseChampionThread();
+                        break;
+                    }
+                    else if(!clientHandle.CanExecuteUserEvent())
+                    {
+                        clientHandle.SetWindowTopmost();
+                    }
+                }
+            }
+            Console.WriteLine("GameOver 结束");
+        }
+
         /// <summary>
         /// 在队伍房间
         /// </summary>
-        public static void inTeamRoom()
+        public static void InTeamRoom()
         {
             Console.WriteLine("inTeamRoom 开始");
             
@@ -155,8 +223,15 @@ namespace LOLBot
                         }
                         else
                         {
-                            StartChooseChampionThread();
-                            break;
+                            if(!clientHandle.GetEditRuneBotton().IsEmpty)
+                            {//在选择英雄界面
+                                StartChooseChampionThread();
+                                break;
+                            }
+                            else if(clientHandle.PlayAgain())
+                            {//是否游戏结束了
+                                Console.WriteLine("游戏已经结束，再来一次");
+                            }
                         }
                     }
                 }
@@ -172,7 +247,7 @@ namespace LOLBot
         /// <summary>
         /// 在排队中
         /// </summary>
-        public static void inQueue()
+        public static void InQueue()
         {
             Console.WriteLine("inQueue 开始");
 
@@ -192,6 +267,8 @@ namespace LOLBot
                             StartChooseChampionThread();
                             break;
                         }
+                        Thread.Sleep(4000);
+                        continue;
                     }
                     else
                     { //不在队列中
@@ -207,8 +284,6 @@ namespace LOLBot
                             break;
                         }
                     }
-
-                    Thread.Sleep(4000);
                 }
             }
             else
@@ -222,7 +297,7 @@ namespace LOLBot
         /// <summary>
         /// 选择英雄
         /// </summary>
-        public static void chooseChampion()
+        public static void ChooseChampion()
         {
             Console.WriteLine("chooseChampion 开始");
 
@@ -232,7 +307,7 @@ namespace LOLBot
                 while (true)
                 {
                     Thread.Sleep(3000);
-
+                    
                     if (clientHandle.GetEditRuneBotton().IsEmpty)
                     {//找不到编辑符文按钮
                         if (Process.GetProcessesByName("League of Legends").ToList().Count == 0)
@@ -250,6 +325,7 @@ namespace LOLBot
                         }
                         else if (clientHandle.RandomlyChooseChampion())
                         {//随机选择一个英雄
+                            clientHandle.CloseTip();//关闭提示，防止干扰
                             Thread.Sleep(2000);
                             if (clientHandle.LockInChampion())
                             {//锁定英雄
@@ -359,6 +435,9 @@ namespace LOLBot
                     if (gameHandle.Playing())
                     {//进入游戏
                         StartPlayGameThread();
+
+                        Point point = gameHandle.GetNowWalkMarkPoint();
+                        if (!point.IsEmpty) gameHandle.UpdateLastWalkMark(point);
                         break;
                     }
                 }
@@ -372,11 +451,19 @@ namespace LOLBot
             Console.WriteLine("PlayGame 开始");
             if (gameHandle.Running())
             {
-                System.Timers.Timer follow = new System.Timers.Timer(5000);
-                follow.Elapsed += new ElapsedEventHandler(CancelFollowTeammate); ;
+                follow = new System.Timers.Timer(5000);
+                follow.Elapsed += new ElapsedEventHandler(CancelFollowTeammate);
+                follow.AutoReset = true;
+                follow.Start();
+
+                walkCheck = new System.Timers.Timer(8000);
+                walkCheck.Elapsed += new ElapsedEventHandler(IsWalking);
+                walkCheck.Start();
+
+                gameHandle.MouseMove();
                 while (gameHandle.Running())
                 {
-                    if(gameHandle.CanexecuteUserEvent())
+                    if(gameHandle.CanExecuteUserEvent())
                     {
                         FollowTeammate();
                     }
@@ -384,6 +471,13 @@ namespace LOLBot
                 //游戏停止运行
                 follow.Stop();
                 follow.Close();
+                walkCheck.Stop();
+                walkCheck.Close();
+            }
+            
+            if(clientHandle.Running())
+            {
+                StartGameOverThread();
             }
             Console.WriteLine("PlayGame 结束");
         }
@@ -394,7 +488,7 @@ namespace LOLBot
         public static void FollowTeammate()
         {
             gameHandle.FollowTeammateWithHotkey(Automation.DD.DDKeys.F1);
-            gameHandle.FollowTeammateWithHotkey(Automation.DD.DDKeys.F2);
+            gameHandle.FollowTeammateWithHotkey(walkKeys[0]);
         }
 
         /// <summary>
@@ -404,15 +498,67 @@ namespace LOLBot
         /// <param name="e"></param>
         public static void CancelFollowTeammate(object sender, ElapsedEventArgs e)
         {
+            ((System.Timers.Timer)sender).Interval = new Random().Next(7000, 10000);
+            ((System.Timers.Timer)sender).Start();
+            
             gameHandle.CancelFollowTeammateWithHotkey(Automation.DD.DDKeys.F1);
-            gameHandle.CancelFollowTeammateWithHotkey(Automation.DD.DDKeys.F2);
+            gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
+
+            gameHandle.MouseMove();
         }
 
-        public static void IsWalking()
+        public static void IsWalking(object sender, ElapsedEventArgs e)
         {
+            Point point = gameHandle.GetNowWalkMarkPoint();
+            if(point.IsEmpty)
+            {
+                notWalkingTime++;
+                WindowScreenshot();
+                return;
+            }
+            else
+            {
+                bool isWalking = gameHandle.IsWalking(point);
+                gameHandle.UpdateLastWalkMark(point);
 
+                if(!isWalking)
+                {//没走动
+                    notWalkingTime++;
+                    Console.WriteLine("没走动，已经检测到 " + notWalkingTime + "次");
+                    if (notWalkingTime >= 4)
+                    {//超过次数
+                        gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
+                        Automation.DD.DDKeys k1 = walkKeys[0];
+                        walkKeys.RemoveAt(0);
+                        walkKeys.Add(k1);
+
+                        Console.WriteLine("现在改键为 " + walkKeys[0]);
+
+                        notWalkingTime = 0;
+                    }
+                }
+                else
+                {
+                    notWalkingTime = 0;
+                    Console.WriteLine("在走动");
+                }
+            }
         }
 
         #endregion
+
+        private static void WindowScreenshot()
+        {
+            IntPtr gameIntPtr = User32.FindWindow("RiotWindowClass", "League of Legends (TM) Client");
+            Window gameWindow = new Window(gameIntPtr);
+            Rectangle winRect = gameWindow.Rect;
+
+            Bitmap windowScreenshot = new Bitmap(winRect.Width, winRect.Height);
+            Graphics g = Graphics.FromImage(windowScreenshot);
+            g.CopyFromScreen(winRect.Location, Point.Empty, winRect.Size);
+            g.Dispose();
+
+            windowScreenshot.Save(@"C:\LOL\" + DateTime.Now + ".png");
+        }
     }
 }

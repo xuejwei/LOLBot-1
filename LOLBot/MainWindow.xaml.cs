@@ -107,7 +107,7 @@ namespace LOLBot
             {
                 this.tipLabel.Content = "F10 热键注册失败";
             }
-            
+
 
             this.startButton.IsEnabled = false;
             this.stopButton.IsEnabled = true;

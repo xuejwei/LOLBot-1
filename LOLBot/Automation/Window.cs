@@ -90,9 +90,9 @@
         /// 是否是焦点窗口
         /// </summary>
         /// <returns></returns>
-        public bool IsActive()
+        public bool IsForeground()
         {
-            if(windowHandle.ToString() == User32.GetActiveWindow().ToString())
+            if(windowHandle == User32.GetForegroundWindow())
             {
                 return true;
             }

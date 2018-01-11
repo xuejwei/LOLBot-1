@@ -103,6 +103,16 @@ namespace LOLBot.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap InQueue_Dark {
+            get {
+                object obj = ResourceManager.GetObject("InQueue_Dark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap LockInChampion {
             get {
                 object obj = ResourceManager.GetObject("LockInChampion", resourceCulture);
@@ -176,6 +186,16 @@ namespace LOLBot.Properties {
         internal static System.Drawing.Bitmap TeamRoom_Disabled {
             get {
                 object obj = ResourceManager.GetObject("TeamRoom_Disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Tip_Close {
+            get {
+                object obj = ResourceManager.GetObject("Tip_Close", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

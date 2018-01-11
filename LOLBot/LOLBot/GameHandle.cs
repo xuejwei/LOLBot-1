@@ -4,7 +4,6 @@ using Automation;
 using System.Drawing;
 using Automation.WinApi;
 using Automation.DD;
-using Automation;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
@@ -42,7 +41,7 @@ namespace LOLBot
             Bitmap walkMark = Properties.Resources.WalkMark;
             ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(430, 770, 64, 32));
 
-            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 50) != 0;
+            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 25) != 0;
             parser.Dispose();
 
             if (found) return true; else return false;
@@ -57,7 +56,7 @@ namespace LOLBot
             Bitmap walkMark = Properties.Resources.WalkMark;
             ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(430, 770, 64, 32));
 
-            int count = parser.FindInWindow(Color.FromArgb(255, 0, 255), 50, true);
+            int count = parser.FindInWindow(Color.FromArgb(255, 0, 255), 25, true);
             parser.Dispose();
             if(count > 0)
             {
@@ -78,10 +77,10 @@ namespace LOLBot
         public void UpdateLastWalkMark(Point markPoint)
         {
             Bitmap walkMark = Properties.Resources.WalkMark;
-            walkMark.Dispose(); //只是为了获取大小
-
+            
             Rectangle winRect = window.Rect;
             Rectangle markRect = new Rectangle(winRect.X + markPoint.X, winRect.Y + markPoint.Y, walkMark.Size.Width, walkMark.Size.Height);
+            walkMark.Dispose(); //只是为了获取大小
 
             Bitmap markScreenshot = new Bitmap(markRect.Width, markRect.Height);
             Graphics g = Graphics.FromImage(markScreenshot);
@@ -102,19 +101,22 @@ namespace LOLBot
             g.CopyFromScreen(markRect.Location, Point.Empty, markRect.Size);
             g.Dispose();
 
-            BitmapData parentImageData = lastWalkMark.LockBits(new Rectangle(0, 0, lastWalkMark.Width, lastWalkMark.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            BitmapData subImageData = nowWalkMark.LockBits(new Rectangle(0, 0, nowWalkMark.Width, nowWalkMark.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            BitmapData lastImageData = lastWalkMark.LockBits(new Rectangle(0, 0, lastWalkMark.Width, lastWalkMark.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            BitmapData nowImageData = nowWalkMark.LockBits(new Rectangle(0, 0, nowWalkMark.Width, nowWalkMark.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
             FindImage findImage = new FindImage();
-            int count = findImage.Match(parentImageData, subImageData, new Rectangle(0, 0, lastWalkMark.Width, lastWalkMark.Height)).Length;
-            
+            int count = findImage.Match(lastImageData, nowImageData, new Rectangle(0, 0, lastWalkMark.Width, lastWalkMark.Height)).Length;
+
+            nowWalkMark.UnlockBits(nowImageData);
+            nowWalkMark.Dispose();
+
             if (count == 0)
             {
-                return false;
+                return true;
             }
             else
-            {//没找到，说明在走动
-                return true;
+            {//找到，说明没在走动
+                return false;
             }
         }
 
@@ -125,7 +127,7 @@ namespace LOLBot
         public void FollowTeammateWithHotkey(DDKeys key)
         {
             DDutil.getInstance().key((int)key, 1);
-            Thread.Sleep(new Random().Next(5, 20));
+            Thread.Sleep(new Random().Next(10, 40));
         }
 
         /// <summary>
@@ -138,6 +140,14 @@ namespace LOLBot
             Thread.Sleep(new Random().Next(5, 20));
         }
 
-
+        /// <summary>
+        /// 鼠标随机在游戏中央移动
+        /// </summary>
+        public void MouseMove()
+        {
+            Rectangle rect = window.Rect;
+            Point center = new Point(rect.Width / 2, rect.Height / 2);
+            this.Click(new Point(new Random().Next(center.X - 100, center.X + 60), new Random().Next(center.Y - 100, center.Y + 60)));
+        }
     }
 }

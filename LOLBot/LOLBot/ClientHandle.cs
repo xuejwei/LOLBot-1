@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Drawing;
-using System.Diagnostics;
-
+using System.Windows;
+using Automation.DD;
 using Automation;
+
+using Window = Automation.Window;
+using Point = System.Drawing.Point;
 
 namespace LOLBot
 {
@@ -22,12 +22,15 @@ namespace LOLBot
         public bool IsInQueue()
         {
             Bitmap inQueue = Properties.Resources.InQueue;
+            Bitmap InQueue_Dark = Properties.Resources.InQueue_Dark;
             ParserImageInWindow parser = new ParserImageInWindow(inQueue, base.window, new Rectangle(1124, 40, 100, 50));
+            ParserImageInWindow parserDark = new ParserImageInWindow(InQueue_Dark, base.window, new Rectangle(1124, 40, 100, 50));
 
-            bool found = parser.FindInWindow(Color.Empty, 20, true) != 0;
+            int count = parser.FindInWindow() + parserDark.FindInWindow();
             parser.Dispose();
+            parserDark.Dispose();
 
-            if (found) return true; else return false;
+            if (count > 0) return true; else return false;
         }
 
         /// <summary>
@@ -87,7 +90,6 @@ namespace LOLBot
             ParserImageInWindow parser = new ParserImageInWindow(acceptImage, base.window, new Rectangle(545, 525, 220, 90));
             bool found = parser.FindInWindow() != 0;
             parser.Dispose();
-
             if (found)
             {
                 Target target = parser.GetATarget();
@@ -107,7 +109,7 @@ namespace LOLBot
         /// 搜索英雄
         /// </summary>
         /// <returns></returns>
-        public bool SearchChampion()
+        public bool SearchChampion(String championName)
         {
             Bitmap searchChampion = Properties.Resources.SearchChampion;
 
@@ -119,8 +121,24 @@ namespace LOLBot
             {
                 Target target = parser.GetATarget();
                 Point clickPoint = target.randomPoint;
-
                 base.Click(clickPoint);
+                Thread.Sleep(1000);
+
+                for(int i = 0; i < 12; i++)
+                {//按退格键 12 次
+                    DDutil.getInstance().key(214, 1);
+                    Thread.Sleep(new Random().Next(10,30));
+                    DDutil.getInstance().key(214, 2);
+                }
+                Clipboard.SetText(championName);
+
+                DDutil.getInstance().key(600, 1); //ctrl
+                Thread.Sleep(new Random().Next(10, 30));
+                DDutil.getInstance().key(503, 1); //c
+                Thread.Sleep(new Random().Next(10, 30));
+                DDutil.getInstance().key(600, 2);
+                Thread.Sleep(new Random().Next(10, 30));
+                DDutil.getInstance().key(503, 2);
 
                 return true;
             }
@@ -192,7 +210,7 @@ namespace LOLBot
             Bitmap lockInChampion = Properties.Resources.LockInChampion;
 
             ParserImageInWindow parser = new ParserImageInWindow(lockInChampion, base.window, new Rectangle(550, 575, 210, 80));
-            bool found = parser.FindInWindow() != 0;
+            bool found = parser.FindInWindow(Color.Empty, 30) != 0;
             parser.Dispose();
 
             if (found)
@@ -223,6 +241,75 @@ namespace LOLBot
             parser.Dispose();
 
             if (found) return true; else return false;
+        }
+
+        /// <summary>
+        /// 跳过评价
+        /// </summary>
+        public bool SkipEvaluate()
+        {
+            Bitmap SkipEvaluate = Properties.Resources.SkipEvaluate;
+
+            ParserImageInWindow parser = new ParserImageInWindow(SkipEvaluate, base.window, new Rectangle(620, 632, 42, 38));
+            bool found = parser.FindInWindow() != 0;
+            parser.Dispose();
+
+            if (found)
+            {
+                Target targets = parser.GetATarget();
+
+                base.Click(targets.randomPoint);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 再来一次
+        /// </summary>
+        /// <returns></returns>
+        public bool PlayAgain()
+        {
+            Bitmap PlayAgain = Properties.Resources.PlayAgain;
+
+            ParserImageInWindow parser = new ParserImageInWindow(PlayAgain, base.window, new Rectangle(470, 666, 160, 40));
+            bool found = parser.FindInWindow() != 0;
+            parser.Dispose();
+
+            if (found)
+            {
+                Target targets = parser.GetATarget();
+
+                base.Click(targets.randomPoint);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 关闭提示
+        /// </summary>
+        public void CloseTip()
+        {
+            Bitmap tipClose = Properties.Resources.Tip_Close;
+            ParserImageInWindow tipCloseParser = new ParserImageInWindow(tipClose, base.window, new Rectangle(0, 0, window.Rect.Width, window.Rect.Height));
+
+            int tipCount = tipCloseParser.FindInWindow(Color.White, 30);
+            tipCloseParser.Dispose();
+
+            if(tipCount > 0)
+            {
+                Target targets = tipCloseParser.GetATarget();
+                base.Click(targets.randomPoint);
+            }
         }
     }
 }

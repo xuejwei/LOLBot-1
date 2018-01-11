@@ -94,6 +94,7 @@ namespace Automation
             {
                 this.parserResult[i] = new Target(result[i], 1);
             }
+            
             return result.Length;
         }
 
