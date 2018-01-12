@@ -23,6 +23,14 @@ namespace LOLBot
             this.window = window;
             mouseController = new MouseController();
         }
+
+        public void MoveMouse(Point point)
+        {
+            if (Running())
+            {
+                mouseController.Move(new Point(point.X + this.window.Rect.X, point.Y + this.window.Rect.Y));
+            }
+        }
         
         public void Click(Point point)
         {
