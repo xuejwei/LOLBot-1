@@ -157,6 +157,21 @@ namespace LOLBot
         /////////////////////////////////////////////////////////
 
         #region 事件处理
+
+        /// <summary>
+        /// 关闭各种提示和弹窗
+        /// </summary>
+        public static void CloseTipAndAlert()
+        {
+            if (clientHandle.Running())
+            {
+                //点击确认按钮
+                clientHandle.ClickConfirmButton();
+                //点击升级的OK按钮
+                clientHandle.ClickOk();
+            }
+        }
+
         public static void GameOver()
         {
             Console.WriteLine("GameOver 开始");
@@ -187,6 +202,10 @@ namespace LOLBot
                     else if(!clientHandle.CanExecuteUserEvent())
                     {
                         clientHandle.SetWindowTopmost();
+                    }
+                    else
+                    {
+                        CloseTipAndAlert();
                     }
                 }
             }
@@ -231,6 +250,10 @@ namespace LOLBot
                             else if(clientHandle.PlayAgain())
                             {//是否游戏结束了
                                 Console.WriteLine("游戏已经结束，再来一次");
+                            }
+                            else
+                            {
+                                CloseTipAndAlert();
                             }
                         }
                     }
@@ -449,6 +472,8 @@ namespace LOLBot
         public static void PlayGame()
         {
             Console.WriteLine("PlayGame 开始");
+            notWalkingTime = 0;
+
             if (gameHandle.Running())
             {
                 follow = new System.Timers.Timer(5000);
@@ -460,7 +485,7 @@ namespace LOLBot
                 walkCheck.Elapsed += new ElapsedEventHandler(IsWalking);
                 walkCheck.Start();
 
-                gameHandle.MouseMove();
+                gameHandle.MouseRandomMove();
                 while (gameHandle.Running())
                 {
                     if(gameHandle.CanExecuteUserEvent())
@@ -504,7 +529,7 @@ namespace LOLBot
             gameHandle.CancelFollowTeammateWithHotkey(Automation.DD.DDKeys.F1);
             gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
 
-            gameHandle.MouseMove();
+            gameHandle.MouseRandomMove();
         }
 
         public static void IsWalking(object sender, ElapsedEventArgs e)
@@ -512,6 +537,7 @@ namespace LOLBot
             Point point = gameHandle.GetNowWalkMarkPoint();
             if(point.IsEmpty)
             {
+                Console.WriteLine("找不到判断标记");
                 notWalkingTime++;
                 WindowScreenshot();
                 return;
@@ -539,7 +565,6 @@ namespace LOLBot
                 }
                 else
                 {
-                    notWalkingTime = 0;
                     Console.WriteLine("在走动");
                 }
             }
@@ -547,8 +572,9 @@ namespace LOLBot
 
         #endregion
 
-        private static void WindowScreenshot()
+        public static void WindowScreenshot()
         {
+            //IntPtr gameIntPtr = User32.FindWindow("RCLIENT", "League of Legends");
             IntPtr gameIntPtr = User32.FindWindow("RiotWindowClass", "League of Legends (TM) Client");
             Window gameWindow = new Window(gameIntPtr);
             Rectangle winRect = gameWindow.Rect;
@@ -557,8 +583,9 @@ namespace LOLBot
             Graphics g = Graphics.FromImage(windowScreenshot);
             g.CopyFromScreen(winRect.Location, Point.Empty, winRect.Size);
             g.Dispose();
-
-            windowScreenshot.Save(@"C:\LOL\" + DateTime.Now + ".png");
+            
+            windowScreenshot.Save(@"C:\LOL\" + DateTime.Now.ToString("MM月dd日HH时mm分ss秒") + ".png");
+            windowScreenshot.Dispose();
         }
     }
 }

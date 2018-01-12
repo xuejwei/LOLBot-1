@@ -143,11 +143,11 @@ namespace LOLBot
         /// <summary>
         /// 鼠标随机在游戏中央移动
         /// </summary>
-        public void MouseMove()
+        public void MouseRandomMove()
         {
             Rectangle rect = window.Rect;
             Point center = new Point(rect.Width / 2, rect.Height / 2);
-            this.Click(new Point(new Random().Next(center.X - 100, center.X + 60), new Random().Next(center.Y - 100, center.Y + 60)));
+            this.MoveMouse(new Point(new Random().Next(center.X - 100, center.X + 60), new Random().Next(center.Y - 100, center.Y + 60)));
         }
     }
 }

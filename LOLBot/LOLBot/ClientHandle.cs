@@ -295,6 +295,48 @@ namespace LOLBot
         }
 
         /// <summary>
+        /// 点击确认按钮
+        /// </summary>
+        public void ClickConfirmButton()
+        {
+            Bitmap Confirm_Normal = Properties.Resources.Confirm_Normal;
+            Bitmap Confirm_Hover = Properties.Resources.Confirm_Hover;
+
+            ParserImageInWindow parserNormal = new ParserImageInWindow(Confirm_Normal, base.window, new Rectangle(300, 222, 620, 385));
+            ParserImageInWindow parserHover = new ParserImageInWindow(Confirm_Normal, base.window, new Rectangle(300, 222, 620, 385));
+            bool found = parserNormal.FindInWindow() != 0 || parserHover.FindInWindow() != 0;
+            parserNormal.Dispose();
+            parserHover.Dispose();
+
+            if (found)
+            {
+                Target normalTarget = parserNormal.GetATarget();
+                Target hoverTarget = parserHover.GetATarget();
+                Point clickPoint = Point.Empty;
+
+                if (normalTarget != null) clickPoint = normalTarget.randomPoint;
+                if (hoverTarget != null) clickPoint = hoverTarget.randomPoint;
+
+                base.Click(clickPoint);
+            }
+        }
+
+        public void ClickOk()
+        {
+            Bitmap ok = Properties.Resources.OK_Normal;
+            ParserImageInWindow okParser = new ParserImageInWindow(ok, base.window, new Rectangle(550, 600, 190, 100));
+
+            int count = okParser.FindInWindow(Color.White, 30);
+            okParser.Dispose();
+
+            if (count > 0)
+            {
+                Target targets = okParser.GetATarget();
+                base.Click(targets.randomPoint);
+            }
+        }
+
+        /// <summary>
         /// 关闭提示
         /// </summary>
         public void CloseTip()
