@@ -31,7 +31,7 @@ namespace LOLBot
                 mouseController.Move(new Point(point.X + this.window.Rect.X, point.Y + this.window.Rect.Y));
             }
         }
-        
+
         public void Click(Point point)
         {
             if (Running())

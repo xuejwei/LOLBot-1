@@ -23,6 +23,8 @@ namespace LOLBot
         static ClientHandle clientHandle;
         static GameHandle gameHandle;
 
+        static String[] championNames = {"时光守护"};
+
         /// <summary>
         /// 跟随英雄的时钟
         /// </summary>
@@ -169,6 +171,8 @@ namespace LOLBot
                 clientHandle.ClickConfirmButton();
                 //点击升级的OK按钮
                 clientHandle.ClickOk();
+                //领取“保持体育精神奖励”
+                clientHandle.ClickCongratulations();
             }
         }
 
@@ -327,6 +331,7 @@ namespace LOLBot
             if (clientHandle.Running())
             {
                 bool isLockInChampion = false;
+                int championNamesIndex = 0;
                 while (true)
                 {
                     Thread.Sleep(3000);
@@ -346,8 +351,23 @@ namespace LOLBot
                             isLockInChampion = true;
                             break;
                         }
-                        else if (clientHandle.RandomlyChooseChampion())
+                        else if (clientHandle.SearchChampion(championNames[championNamesIndex]))
                         {//随机选择一个英雄
+                            Thread.Sleep(1000);
+                            if (!clientHandle.RandomlyChooseChampion())
+                            {//如果没有英雄可以选择
+                                championNamesIndex++;   //切换下一个英雄名
+                                if (championNamesIndex == championNames.Length)
+                                {//已经没有备选英雄了
+                                    championNamesIndex = 0;
+                                    clientHandle.SearchChampion("");
+                                    clientHandle.RandomlyChooseChampion();
+                                }
+                                else
+                                {//搜索备选
+                                    continue;
+                                }
+                            }
                             clientHandle.CloseTip();//关闭提示，防止干扰
                             Thread.Sleep(2000);
                             if (clientHandle.LockInChampion())

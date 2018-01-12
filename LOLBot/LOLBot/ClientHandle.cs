@@ -113,33 +113,44 @@ namespace LOLBot
         {
             Bitmap searchChampion = Properties.Resources.SearchChampion;
 
-            ParserImageInWindow parser = new ParserImageInWindow(searchChampion, base.window, new Rectangle(728, 90, 60, 60));
-            bool found = parser.FindInWindow() != 0;
+            ParserImageInWindow parser = new ParserImageInWindow(searchChampion, base.window, new Rectangle(728, 90, 60, 30));
+            int count = parser.FindInWindow(Color.Empty, 20);
             parser.Dispose();
 
-            if (found)
+            if (count > 0)
             {
                 Target target = parser.GetATarget();
                 Point clickPoint = target.randomPoint;
+                //连续点击3次全选
                 base.Click(clickPoint);
+                Thread.Sleep(new Random().Next(50, 100));
+                base.Click(clickPoint);
+                Thread.Sleep(new Random().Next(50, 100));
+                base.Click(clickPoint);
+                Thread.Sleep(new Random().Next(50, 100));
+
+                //按退格键
+                Thread.Sleep(new Random().Next(30, 100));
+                DDutil.getInstance().key(214, 1);
+                Thread.Sleep(new Random().Next(30, 100));
+                DDutil.getInstance().key(214, 2);
+
+                Thread th = new Thread(new ThreadStart(delegate ()
+                {
+                    Clipboard.SetText(championName);
+                }));
+                th.TrySetApartmentState(ApartmentState.STA);
+                th.Start();
+
                 Thread.Sleep(1000);
-
-                for(int i = 0; i < 12; i++)
-                {//按退格键 12 次
-                    DDutil.getInstance().key(214, 1);
-                    Thread.Sleep(new Random().Next(10,30));
-                    DDutil.getInstance().key(214, 2);
-                }
-                Clipboard.SetText(championName);
-
                 DDutil.getInstance().key(600, 1); //ctrl
                 Thread.Sleep(new Random().Next(10, 30));
-                DDutil.getInstance().key(503, 1); //c
+                DDutil.getInstance().key(504, 1); //v
                 Thread.Sleep(new Random().Next(10, 30));
                 DDutil.getInstance().key(600, 2);
                 Thread.Sleep(new Random().Next(10, 30));
-                DDutil.getInstance().key(503, 2);
-
+                DDutil.getInstance().key(504, 2);
+                
                 return true;
             }
             else
@@ -321,6 +332,9 @@ namespace LOLBot
             }
         }
 
+        /// <summary>
+        /// 领取升级奖励
+        /// </summary>
         public void ClickOk()
         {
             Bitmap ok = Properties.Resources.OK_Normal;
@@ -333,6 +347,33 @@ namespace LOLBot
             {
                 Target targets = okParser.GetATarget();
                 base.Click(targets.randomPoint);
+            }
+        }
+
+        /// <summary>
+        /// 领取“保持体育精神奖励”
+        /// </summary>
+        public void ClickCongratulations()
+        {
+            Bitmap Congratulations_Normal = Properties.Resources.Congratulations_Normal;
+            Bitmap Congratulations_Hover = Properties.Resources.Congratulations_Hover;
+
+            ParserImageInWindow parserNormal = new ParserImageInWindow(Congratulations_Normal, base.window, new Rectangle(570, 500, 150, 60));
+            ParserImageInWindow parserHover = new ParserImageInWindow(Congratulations_Hover, base.window, new Rectangle(570, 500, 150, 60));
+            bool found = parserNormal.FindInWindow(Color.White, 30) != 0 || parserHover.FindInWindow(Color.White, 30) != 0;
+            parserNormal.Dispose();
+            parserHover.Dispose();
+
+            if (found)
+            {
+                Target normalTarget = parserNormal.GetATarget();
+                Target hoverTarget = parserHover.GetATarget();
+                Point clickPoint = Point.Empty;
+
+                if (normalTarget != null) clickPoint = normalTarget.randomPoint;
+                if (hoverTarget != null) clickPoint = hoverTarget.randomPoint;
+
+                base.Click(clickPoint);
             }
         }
 

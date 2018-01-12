@@ -103,6 +103,26 @@ namespace LOLBot.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap Congratulations_Hover {
+            get {
+                object obj = ResourceManager.GetObject("Congratulations_Hover", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Congratulations_Normal {
+            get {
+                object obj = ResourceManager.GetObject("Congratulations_Normal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap EditRune {
             get {
                 object obj = ResourceManager.GetObject("EditRune", resourceCulture);

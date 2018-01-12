@@ -206,6 +206,8 @@
     <Content Include="dd74000x64.64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Image\Congratulations_Hover.png" />
+    <Resource Include="Resources\Image\Congratulations_Normal.png" />
     <Resource Include="Resources\Image\OK_Normal.png" />
     <Resource Include="Resources\Image\Confirm_Hover.png" />
     <Resource Include="Resources\Image\Confirm_Normal.png" />
