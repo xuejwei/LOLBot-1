@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Flurl.Http;
+using System.Globalization;
 
 using MessageBox = System.Windows.MessageBox;
 
@@ -60,6 +62,20 @@ namespace LOLBot
             if(errString != null)
             {
                 MessageBox.Show(errString);
+            }
+
+           //requesAsync();
+        }
+
+        private async Task requesAsync()
+        {
+            string text = await "http://api.mmuaa.com/gettime".GetStringAsync();
+            DateTime now = DateTime.ParseExact(text, "#yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            DateTime time = DateTime.ParseExact("#20180116000001", "#yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            if (now.CompareTo(time) > 1)
+            {
+                stopBot();
+                MessageBox.Show("应用有效期截至 2018 年 1 月 16 日，现在无法使用，请更新最新版");
             }
         }
 
