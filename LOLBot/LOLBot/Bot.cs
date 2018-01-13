@@ -102,6 +102,7 @@ namespace LOLBot
 
             if (follow != null) follow.Close();
             if (walkCheck != null) walkCheck.Close();
+            if (gameHandle != null) gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
         }
 
         /// <summary>

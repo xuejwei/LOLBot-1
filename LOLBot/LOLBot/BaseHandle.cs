@@ -8,7 +8,7 @@ using System.Drawing;
 using Automation.WinApi;
 using HenoohDeviceEmulator;
 using Automation;
-using WindowsInput;
+using Interceptor;
 
 namespace LOLBot
 {
@@ -16,14 +16,11 @@ namespace LOLBot
     {
         protected Window window;
         private MouseController mouseController;
-
-        public IInputSimulator inputSimulator;
-
+       
         public BaseHandle(Window window)
         {
             this.window = window;
             mouseController = new MouseController();
-            inputSimulator = new InputSimulator();
         }
 
         public void MoveMouse(Point point)
@@ -39,7 +36,7 @@ namespace LOLBot
         /// </summary>
         public void MouseRightDown()
         {
-            inputSimulator.Mouse.RightButtonDown();
+            InputManager.ShareInstance().SendMouseEvent(MouseState.RightDown);
             Thread.Sleep(new Random().Next(10, 40));
         }
 
@@ -48,7 +45,7 @@ namespace LOLBot
         /// </summary>
         public void MouseRightUp()
         {
-            inputSimulator.Mouse.RightButtonUp();
+            InputManager.ShareInstance().SendMouseEvent(MouseState.RightUp);
             Thread.Sleep(new Random().Next(5, 20));
         }
 
@@ -59,9 +56,9 @@ namespace LOLBot
                 User32.SetForegroundWindow(window.windowHandle);
 
                 mouseController.Move(new Point(point.X + this.window.Rect.X, point.Y + this.window.Rect.Y));
-                inputSimulator.Mouse.LeftButtonDown() ;
+                InputManager.ShareInstance().SendMouseEvent(MouseState.LeftDown);
                 Thread.Sleep(new Random().Next(20, 60));
-                inputSimulator.Mouse.LeftButtonUp();
+                InputManager.ShareInstance().SendMouseEvent(MouseState.LeftUp);
             }
         }
 

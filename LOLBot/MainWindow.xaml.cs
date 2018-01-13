@@ -58,8 +58,9 @@ namespace LOLBot
                     this.tipLabel.Content = "F9 热键注册失败";
                 }
             }
-            
-           //requesAsync();
+
+            InputManager.ShareInstance().Load();
+            //requesAsync();
         }
 
         private async Task requesAsync()
@@ -83,13 +84,7 @@ namespace LOLBot
                     if (wideParam.ToInt32() == 233)
                     {
                         //按了 F9
-                        startBot();
-                    }
-
-                    if (wideParam.ToInt32() == 4843)
-                    {
-                        //按了 F10
-                        stopBot();
+                        if(startButton.IsEnabled) startButton_Click(null, null);
                     }
 
                     break;
@@ -100,7 +95,15 @@ namespace LOLBot
 
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
-            startBot();
+            if (InputManager.ShareInstance().deviceId != 0)
+            {
+                startBot();
+            }
+            else
+            {
+                InputManager.ShareInstance().OnKeyPressed += MainWindow_OnKeyPressed1;
+                MessageBox.Show("每次启动后，需要按一次键盘后才能开启");
+            }
         }
 
         private void stopButton_Click(object sender, RoutedEventArgs e)
@@ -110,20 +113,34 @@ namespace LOLBot
 
         private void startBot()
         {
-            InputManager.ShareInstance().Load();
+            if(!InputManager.ShareInstance().IsLoaded)
+            {
+                InputManager.ShareInstance().Load();
+            }
 
             Bot.Start();
             Bot.championNames = championNamesTextBox.Text.Split('|');
-            //注册终止的热键，并解绑其热键
-            bool regF10 = User32.RegisterHotKey(interopHelper.Handle, 4843, 0, (int)Keys.F10);
+
             User32.UnregisterHotKey(interopHelper.Handle, 233);
-            if (!regF10)
-            {
-                this.tipLabel.Content = "F10 热键注册失败";
-            }
             
             this.startButton.IsEnabled = false;
             this.stopButton.IsEnabled = true;
+        }
+
+        private void MainWindow_OnKeyPressed1(object sender, Interceptor.KeyPressedEventArgs e)
+        {
+            Dispatcher.Invoke((Action)delegate
+            {
+                if (e.Key == Interceptor.Keys.F10 && !startButton.IsEnabled)
+                {
+                    stopBot();
+                }
+            });
+        }
+
+        private void MainWindow_OnKeyPressed(object sender, Interceptor.KeyPressedEventArgs e)
+        {
+            Console.WriteLine(1);
         }
 
         private void stopBot()
@@ -131,13 +148,7 @@ namespace LOLBot
             InputManager.ShareInstance().Unload();
 
             Bot.Stop(null);
-            //注册开始的热键，并解绑其他热键
-            bool regF9 = User32.RegisterHotKey(interopHelper.Handle, 233, 0, (int)Keys.F9);
-            User32.UnregisterHotKey(interopHelper.Handle, 4843);
-            if (!regF9)
-            {
-                this.tipLabel.Content = "F9 热键注册失败";
-            }
+            User32.RegisterHotKey(interopHelper.Handle, 233, 0, (int)Keys.F9);
 
             this.startButton.IsEnabled = true;
             this.stopButton.IsEnabled = false;

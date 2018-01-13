@@ -3,6 +3,7 @@ using System.Threading;
 using System.Drawing;
 using System.Windows;
 using Automation;
+using Interceptor;
 
 using Window = Automation.Window;
 using Point = System.Drawing.Point;
@@ -130,25 +131,26 @@ namespace LOLBot
 
                 //按退格键
                 Thread.Sleep(new Random().Next(30, 100));
-                inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.DELETE);
+                InputManager.ShareInstance().SendKey(Keys.Delete, KeyState.Down);
                 Thread.Sleep(new Random().Next(30, 100));
-                inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.DELETE);
+                InputManager.ShareInstance().SendKey(Keys.Delete, KeyState.Up);
 
                 Thread th = new Thread(new ThreadStart(delegate ()
                 {
+                    Clipboard.Clear();
                     Clipboard.SetDataObject(championName, true);
                 }));
                 th.TrySetApartmentState(ApartmentState.STA);
                 th.Start();
 
                 Thread.Sleep(1000);
-                inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.CONTROL);
+                InputManager.ShareInstance().SendKey(Keys.Control, KeyState.Down);
                 Thread.Sleep(new Random().Next(40, 100));
-                inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_V);
+                InputManager.ShareInstance().SendKey(Keys.V, KeyState.Down);
                 Thread.Sleep(new Random().Next(40, 100));
-                inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.CONTROL);
+                InputManager.ShareInstance().SendKey(Keys.Control, KeyState.Up);
                 Thread.Sleep(new Random().Next(40, 100));
-                inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_V);
+                InputManager.ShareInstance().SendKey(Keys.V, KeyState.Up);
 
                 return true;
             }

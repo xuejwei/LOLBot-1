@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using Keys = Interceptor.Keys;
+using Interceptor;
 
 namespace LOLBot
 {
@@ -125,7 +126,7 @@ namespace LOLBot
         /// <param name="key"></param>
         public void FollowTeammateWithHotkey(Keys keyCode)
         {
-            inputSimulator.Keyboard.KeyDown(keyCode);
+            InputManager.ShareInstance().SendKey(keyCode, KeyState.Down);
             Thread.Sleep(new Random().Next(10, 40));
         }
 
@@ -135,7 +136,7 @@ namespace LOLBot
         /// <param name="key"></param>
         public void CancelFollowTeammateWithHotkey(Keys keyCode)
         {
-            inputSimulator.Keyboard.KeyUp(keyCode);
+            InputManager.ShareInstance().SendKey(keyCode, KeyState.Up);
             Thread.Sleep(new Random().Next(5, 20));
         }
 

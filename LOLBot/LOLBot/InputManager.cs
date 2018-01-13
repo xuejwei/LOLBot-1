@@ -17,6 +17,7 @@ namespace LOLBot
             if (input == null)
             {
                 input = new Input();
+                input.KeyboardFilterMode = KeyboardFilterMode.All;
             }
             return input;
         }
