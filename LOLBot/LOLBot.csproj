@@ -85,13 +85,16 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>B24AB58828F733E6DCC5F0771C54AE3C72761BED</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>CABBCC9F7FF8A5D58921D1A63423967676DE9074</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>LOLBot_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>openssl.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Flurl, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -129,10 +132,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Automation\DD\CDD.cs" />
-    <Compile Include="Automation\DD\DDutil.cs" />
     <Compile Include="Automation\FindImage.cs" />
     <Compile Include="Automation\ParserImageInWindow.cs" />
+    <Compile Include="Interceptor\Input.cs" />
+    <Compile Include="Interceptor\InterceptionDriver.cs" />
+    <Compile Include="Interceptor\KeyPressedEventArgs.cs" />
+    <Compile Include="Interceptor\Keys.cs" />
+    <Compile Include="Interceptor\MousePressedEventArgs.cs" />
+    <Compile Include="Interceptor\ScrollDirection.cs" />
     <Compile Include="LOLBot\BaseHandle.cs" />
     <Compile Include="LOLBot\Bot.cs" />
     <Compile Include="LOLBot\GameHandle.cs" />
@@ -197,15 +204,6 @@
     <Resource Include="Resources\Image\QueueUp_Normal.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dd74000x32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="dd74000x64.32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="dd74000x64.64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Resources\Image\Congratulations_Hover.png" />
     <Resource Include="Resources\Image\Congratulations_Normal.png" />
     <Resource Include="Resources\Image\OK_Normal.png" />

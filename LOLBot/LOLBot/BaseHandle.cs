@@ -2,26 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Drawing;
 
 using Automation.WinApi;
 using HenoohDeviceEmulator;
 using Automation;
-using Automation.DD;
+using WindowsInput;
 
 namespace LOLBot
 {
     class BaseHandle
     {
         protected Window window;
-
         private MouseController mouseController;
+
+        public IInputSimulator inputSimulator;
 
         public BaseHandle(Window window)
         {
             this.window = window;
             mouseController = new MouseController();
+            inputSimulator = new InputSimulator();
         }
 
         public void MoveMouse(Point point)
@@ -32,6 +34,24 @@ namespace LOLBot
             }
         }
 
+        /// <summary>
+        /// 鼠标右键按下
+        /// </summary>
+        public void MouseRightDown()
+        {
+            inputSimulator.Mouse.RightButtonDown();
+            Thread.Sleep(new Random().Next(10, 40));
+        }
+
+        /// <summary>
+        /// 鼠标右键弹起
+        /// </summary>
+        public void MouseRightUp()
+        {
+            inputSimulator.Mouse.RightButtonUp();
+            Thread.Sleep(new Random().Next(5, 20));
+        }
+
         public void Click(Point point)
         {
             if (Running())
@@ -39,9 +59,9 @@ namespace LOLBot
                 User32.SetForegroundWindow(window.windowHandle);
 
                 mouseController.Move(new Point(point.X + this.window.Rect.X, point.Y + this.window.Rect.Y));
-                DDutil.getInstance().btn((int)MouseBtn.左下);
-                new Random().Next(50, 150);
-                DDutil.getInstance().btn((int)MouseBtn.左上);
+                inputSimulator.Mouse.LeftButtonDown() ;
+                Thread.Sleep(new Random().Next(20, 60));
+                inputSimulator.Mouse.LeftButtonUp();
             }
         }
 

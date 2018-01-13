@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
+//using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -19,8 +20,8 @@ using System.Globalization;
 
 using MessageBox = System.Windows.MessageBox;
 
-using Automation.DD;
 using Automation.WinApi;
+using System.Security.Permissions;
 
 namespace LOLBot
 {
@@ -57,13 +58,7 @@ namespace LOLBot
                     this.tipLabel.Content = "F9 热键注册失败";
                 }
             }
-
-            string errString = DDutil.init();
-            if(errString != null)
-            {
-                MessageBox.Show(errString);
-            }
-
+            
            //requesAsync();
         }
 
@@ -115,7 +110,10 @@ namespace LOLBot
 
         private void startBot()
         {
+            InputManager.ShareInstance().Load();
+
             Bot.Start();
+            Bot.championNames = championNamesTextBox.Text.Split('|');
             //注册终止的热键，并解绑其热键
             bool regF10 = User32.RegisterHotKey(interopHelper.Handle, 4843, 0, (int)Keys.F10);
             User32.UnregisterHotKey(interopHelper.Handle, 233);
@@ -123,14 +121,15 @@ namespace LOLBot
             {
                 this.tipLabel.Content = "F10 热键注册失败";
             }
-
-
+            
             this.startButton.IsEnabled = false;
             this.stopButton.IsEnabled = true;
         }
 
         private void stopBot()
         {
+            InputManager.ShareInstance().Unload();
+
             Bot.Stop(null);
             //注册开始的热键，并解绑其他热键
             bool regF9 = User32.RegisterHotKey(interopHelper.Handle, 233, 0, (int)Keys.F9);

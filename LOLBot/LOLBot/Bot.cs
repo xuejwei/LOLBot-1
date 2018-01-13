@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Timers;
 using System.Collections.Generic;
+using Interceptor;
 
 using Automation;
 using Automation.WinApi;
@@ -23,7 +24,7 @@ namespace LOLBot
         static ClientHandle clientHandle;
         static GameHandle gameHandle;
 
-        static String[] championNames = {"时光守护"};
+        public static String[] championNames = {"时光守护"};
 
         /// <summary>
         /// 跟随英雄的时钟
@@ -33,14 +34,14 @@ namespace LOLBot
 
         static int notWalkingTime = 0;
 
-        static List<Automation.DD.DDKeys> walkKeys = new List<Automation.DD.DDKeys>();
+        static List<Keys> walkKeys = new List<Keys>();
 
         public static bool Start()
         {
-            walkKeys.Add(Automation.DD.DDKeys.F2);
-            walkKeys.Add(Automation.DD.DDKeys.F3);
-            walkKeys.Add(Automation.DD.DDKeys.F4);
-            walkKeys.Add(Automation.DD.DDKeys.F5);
+            walkKeys.Add(Keys.F2);
+            walkKeys.Add(Keys.F3);
+            walkKeys.Add(Keys.F4);
+            walkKeys.Add(Keys.F5);
 
             IntPtr clientIntPtr = User32.FindWindow("RCLIENT", "League of Legends");
             IntPtr gameIntPtr = User32.FindWindow("RiotWindowClass", "League of Legends (TM) Client");
@@ -532,7 +533,7 @@ namespace LOLBot
         /// </summary>
         public static void FollowTeammate()
         {
-            gameHandle.FollowTeammateWithHotkey(Automation.DD.DDKeys.F1);
+            gameHandle.MouseRightDown();
             gameHandle.FollowTeammateWithHotkey(walkKeys[0]);
         }
 
@@ -545,8 +546,8 @@ namespace LOLBot
         {
             ((System.Timers.Timer)sender).Interval = new Random().Next(7000, 10000);
             ((System.Timers.Timer)sender).Start();
-            
-            gameHandle.CancelFollowTeammateWithHotkey(Automation.DD.DDKeys.F1);
+
+            gameHandle.MouseRightUp();
             gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
 
             gameHandle.MouseRandomMove();
@@ -574,7 +575,7 @@ namespace LOLBot
                     if (notWalkingTime >= 4)
                     {//超过次数
                         gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
-                        Automation.DD.DDKeys k1 = walkKeys[0];
+                        Keys k1 = walkKeys[0];
                         walkKeys.RemoveAt(0);
                         walkKeys.Add(k1);
 

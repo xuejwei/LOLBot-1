@@ -2,10 +2,9 @@
 using System.Threading;
 using Automation;
 using System.Drawing;
-using Automation.WinApi;
-using Automation.DD;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using Keys = Interceptor.Keys;
 
 namespace LOLBot
 {
@@ -124,9 +123,9 @@ namespace LOLBot
         /// 跟随
         /// </summary>
         /// <param name="key"></param>
-        public void FollowTeammateWithHotkey(DDKeys key)
+        public void FollowTeammateWithHotkey(Keys keyCode)
         {
-            DDutil.getInstance().key((int)key, 1);
+            inputSimulator.Keyboard.KeyDown(keyCode);
             Thread.Sleep(new Random().Next(10, 40));
         }
 
@@ -134,9 +133,9 @@ namespace LOLBot
         /// 取消跟随
         /// </summary>
         /// <param name="key"></param>
-        public void CancelFollowTeammateWithHotkey(DDKeys key)
+        public void CancelFollowTeammateWithHotkey(Keys keyCode)
         {
-            DDutil.getInstance().key((int)key, 2);
+            inputSimulator.Keyboard.KeyUp(keyCode);
             Thread.Sleep(new Random().Next(5, 20));
         }
 

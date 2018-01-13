@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Drawing;
 using System.Windows;
-using Automation.DD;
 using Automation;
 
 using Window = Automation.Window;
@@ -131,26 +130,26 @@ namespace LOLBot
 
                 //按退格键
                 Thread.Sleep(new Random().Next(30, 100));
-                DDutil.getInstance().key(214, 1);
+                inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.DELETE);
                 Thread.Sleep(new Random().Next(30, 100));
-                DDutil.getInstance().key(214, 2);
+                inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.DELETE);
 
                 Thread th = new Thread(new ThreadStart(delegate ()
                 {
-                    Clipboard.SetText(championName);
+                    Clipboard.SetDataObject(championName, true);
                 }));
                 th.TrySetApartmentState(ApartmentState.STA);
                 th.Start();
 
                 Thread.Sleep(1000);
-                DDutil.getInstance().key(600, 1); //ctrl
-                Thread.Sleep(new Random().Next(10, 30));
-                DDutil.getInstance().key(504, 1); //v
-                Thread.Sleep(new Random().Next(10, 30));
-                DDutil.getInstance().key(600, 2);
-                Thread.Sleep(new Random().Next(10, 30));
-                DDutil.getInstance().key(504, 2);
-                
+                inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.CONTROL);
+                Thread.Sleep(new Random().Next(40, 100));
+                inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_V);
+                Thread.Sleep(new Random().Next(40, 100));
+                inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.CONTROL);
+                Thread.Sleep(new Random().Next(40, 100));
+                inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_V);
+
                 return true;
             }
             else
@@ -313,8 +312,8 @@ namespace LOLBot
             Bitmap Confirm_Normal = Properties.Resources.Confirm_Normal;
             Bitmap Confirm_Hover = Properties.Resources.Confirm_Hover;
 
-            ParserImageInWindow parserNormal = new ParserImageInWindow(Confirm_Normal, base.window, new Rectangle(300, 222, 620, 385));
-            ParserImageInWindow parserHover = new ParserImageInWindow(Confirm_Normal, base.window, new Rectangle(300, 222, 620, 385));
+            ParserImageInWindow parserNormal = new ParserImageInWindow(Confirm_Normal, base.window, new Rectangle(300, 222, 600, 490));
+            ParserImageInWindow parserHover = new ParserImageInWindow(Confirm_Normal, base.window, new Rectangle(300, 222, 600, 490));
             bool found = parserNormal.FindInWindow() != 0 || parserHover.FindInWindow() != 0;
             parserNormal.Dispose();
             parserHover.Dispose();
@@ -338,7 +337,7 @@ namespace LOLBot
         public void ClickOk()
         {
             Bitmap ok = Properties.Resources.OK_Normal;
-            ParserImageInWindow okParser = new ParserImageInWindow(ok, base.window, new Rectangle(550, 600, 190, 100));
+            ParserImageInWindow okParser = new ParserImageInWindow(ok, base.window, new Rectangle(300, 222, 600, 490));
 
             int count = okParser.FindInWindow(Color.White, 30);
             okParser.Dispose();
