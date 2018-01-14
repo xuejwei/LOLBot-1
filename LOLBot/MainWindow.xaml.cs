@@ -64,14 +64,15 @@ namespace LOLBot
                 MessageBox.Show("你还没有安装键盘鼠标模拟器的驱动。请看使用说明");
             }
             InputManager.ShareInstance().OnKeyPressed += MainWindow_OnKeyPressed1;
-            //requesAsync();
+
+            requesAsync();
         }
 
         private async Task requesAsync()
         {
             string text = await "http://api.mmuaa.com/gettime".GetStringAsync();
             DateTime now = DateTime.ParseExact(text, "#yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-            DateTime time = DateTime.ParseExact("#20180116000001", "#yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            DateTime time = DateTime.ParseExact("#20180118000001", "#yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             if (now.CompareTo(time) > 1)
             {
                 stopBot();
@@ -99,7 +100,6 @@ namespace LOLBot
 
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
-            return;
             if (InputManager.ShareInstance().deviceId != 0)
             {
                 startBot();
@@ -152,8 +152,11 @@ namespace LOLBot
         {
             InputManager.ShareInstance().Unload();
 
-            Bot.Stop(null);
+            Bot.Stop();
             User32.RegisterHotKey(interopHelper.Handle, 233, 0, (int)Keys.F9);
+
+            Thread.Sleep(100);
+            InputManager.ShareInstance().SendRightClick();
 
             this.startButton.IsEnabled = true;
             this.stopButton.IsEnabled = false;

@@ -73,34 +73,26 @@ namespace LOLBot
         /// <summary>
         /// 停止线程
         /// </summary>
-        /// <param name="excludeThread">依然运行的线程</param>
-        public static void Stop(Thread excludeThread)
+        public static void Stop()
         {
-            if(excludeThread != inTeamRoomThread || excludeThread != inQueueThread || excludeThread != chooseChampionThread)
-            {//如果结束的线程不是处理客户端的线程
-                if (clientHandle != null) clientHandle.CancelWindowTopmost();
-            }
-            else
-            {
-                if(clientHandle != null) clientHandle.SetWindowTopmost();
-            }
+            if (clientHandle != null) clientHandle.CancelWindowTopmost();
 
-            if (inTeamRoomThread != null && excludeThread != inTeamRoomThread)
+            if (inTeamRoomThread != null)
                 inTeamRoomThread.Abort();
 
-            if (inQueueThread != null && excludeThread != inQueueThread)
+            if (inQueueThread != null)
                 inQueueThread.Abort();
 
-            if (chooseChampionThread != null && excludeThread != chooseChampionThread)
+            if (chooseChampionThread != null)
                 chooseChampionThread.Abort();
 
-            if (loadingGameThread != null && excludeThread != loadingGameThread)
+            if (loadingGameThread != null)
                 loadingGameThread.Abort();
 
-            if (playGameThread != null && excludeThread != playGameThread)
+            if (playGameThread != null)
                 playGameThread.Abort();
 
-            if (gameOverThread != null && excludeThread != gameOverThread)
+            if (gameOverThread != null)
                 gameOverThread.Abort();
             
             if (CancelFollowTimer != null) CancelFollowTimer.Close();
@@ -545,7 +537,7 @@ namespace LOLBot
 
             gameHandle.MouseRightDown();
             gameHandle.FollowTeammateWithHotkey(key);
-            Thread.Sleep(new Random().Next(20, 200));
+            Thread.Sleep(new Random().Next(3000, 5000));
             gameHandle.MouseRightUp();
             gameHandle.CancelFollowTeammateWithHotkey(key);
         }

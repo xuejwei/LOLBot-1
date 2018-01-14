@@ -143,6 +143,21 @@ namespace LOLBot
         }
 
         /// <summary>
+        /// 是否在目标附近
+        /// </summary>
+        /// <returns></returns>
+        public bool NearTheTarget()
+        {
+            Bitmap hp = Properties.Resources.HP;
+            ParserImageInWindow parser = new ParserImageInWindow(hp, base.window, new Rectangle(112, 0, 800, 600));
+
+            bool found = parser.FindInWindow() != 0;
+            parser.Dispose();
+
+            return found;
+        }
+
+        /// <summary>
         /// 跟随
         /// </summary>
         /// <param name="key"></param>
