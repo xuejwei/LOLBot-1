@@ -10,9 +10,9 @@
         <Button Name="startButton" Content="开始(F9)" HorizontalAlignment="Left" Margin="86,93,0,0" VerticalAlignment="Top" Width="103" Click="startButton_Click" Height="53"/>
         <Button Name="stopButton" Content="停止(F10)" HorizontalAlignment="Left" Margin="291,93,0,0" IsEnabled="False" VerticalAlignment="Top" Width="103" Height="53" Click="stopButton_Click"/>
         <Label Name="tipLabel" Content="" Margin="172,161,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Width="161" HorizontalAlignment="Left"/>
-        <Label Content="创建一个匹配或人机房间，就可以开始了&#xA;游戏必须是 无边框 1280 * 800&#xA;用户界面缩放设置最小，不懂的看使用说明" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="0,18,0,0" VerticalAlignment="Top" Width="517" Height="57"/>
+        <Label Content="创建一个匹配或人机房间，就可以开始了&#xA;游戏必须是 无边框 1024 * 768&#xA;地图缩放设置最大，不懂的看使用说明" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="0,18,0,0" VerticalAlignment="Top" Width="517" Height="57"/>
         <TextBox Name="championNamesTextBox" HorizontalAlignment="Left" Height="23" Margin="54,254,0,0" TextWrapping="Wrap" Text="时光守护|寒冰|无极剑圣|德玛西亚之力" VerticalAlignment="Top" Width="405"/>
-        <Label Content="指定选择英雄，用 | 隔开" HorizontalAlignment="Left" Margin="54,224,0,0" VerticalAlignment="Top"/>
+        <Label Content="指定选择英雄，用 | 隔开。不填就随机选" HorizontalAlignment="Left" Margin="54,224,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
