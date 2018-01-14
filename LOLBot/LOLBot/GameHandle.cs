@@ -39,12 +39,32 @@ namespace LOLBot
         public bool Playing()
         {
             Bitmap walkMark = Properties.Resources.WalkMark;
-            ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(430, 770, 64, 32));
+            ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(305, 750, 70, 18));
 
-            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 25) != 0;
+            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 10) != 0;
             parser.Dispose();
 
             if (found) return true; else return false;
+        }
+
+        /// <summary>
+        /// 响应暂离警告
+        /// </summary>
+        public void AnswerLeaveWarning()
+        {
+            Bitmap leaveWarning = Properties.Resources.LeaveWarning;
+            ParserImageInWindow parser = new ParserImageInWindow(leaveWarning, base.window, new Rectangle(415, 410, 180, 60));
+
+            bool found = parser.FindInWindow(Color.Empty, 15) != 0;
+            parser.Dispose();
+
+            if (found)
+            {
+                Target target = parser.GetATarget();
+                Point point = target.randomPoint;
+
+                this.Click(point);
+            }
         }
 
         /// <summary>
@@ -54,9 +74,9 @@ namespace LOLBot
         public Point GetNowWalkMarkPoint()
         {
             Bitmap walkMark = Properties.Resources.WalkMark;
-            ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(430, 770, 64, 32));
-
-            int count = parser.FindInWindow(Color.FromArgb(255, 0, 255), 25, true);
+            ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(305, 750, 70, 18));
+            
+            int count = parser.FindInWindow(Color.FromArgb(255, 0, 255), 15, true);
             parser.Dispose();
             if(count > 0)
             {

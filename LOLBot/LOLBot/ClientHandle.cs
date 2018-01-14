@@ -26,7 +26,7 @@ namespace LOLBot
             ParserImageInWindow parser = new ParserImageInWindow(inQueue, base.window, new Rectangle(1124, 40, 100, 50));
             ParserImageInWindow parserDark = new ParserImageInWindow(InQueue_Dark, base.window, new Rectangle(1124, 40, 100, 50));
 
-            int count = parser.FindInWindow() + parserDark.FindInWindow();
+            int count = parser.FindInWindow(Color.Empty, 30) + parserDark.FindInWindow();
             parser.Dispose();
             parserDark.Dispose();
 
@@ -88,7 +88,7 @@ namespace LOLBot
             Bitmap acceptImage = Properties.Resources.Accept;
 
             ParserImageInWindow parser = new ParserImageInWindow(acceptImage, base.window, new Rectangle(545, 525, 220, 90));
-            bool found = parser.FindInWindow() != 0;
+            bool found = parser.FindInWindow(Color.Empty, 30) != 0;
             parser.Dispose();
             if (found)
             {
@@ -316,7 +316,7 @@ namespace LOLBot
 
             ParserImageInWindow parserNormal = new ParserImageInWindow(Confirm_Normal, base.window, new Rectangle(300, 222, 600, 490));
             ParserImageInWindow parserHover = new ParserImageInWindow(Confirm_Normal, base.window, new Rectangle(300, 222, 600, 490));
-            bool found = parserNormal.FindInWindow() != 0 || parserHover.FindInWindow() != 0;
+            bool found = parserNormal.FindInWindow(Color.Empty, 20) != 0 || parserHover.FindInWindow(Color.Empty, 20) != 0;
             parserNormal.Dispose();
             parserHover.Dispose();
 

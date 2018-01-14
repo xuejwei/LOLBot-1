@@ -100,9 +100,12 @@ namespace LOLBot
             if (playGameThread != null && excludeThread != playGameThread)
                 playGameThread.Abort();
 
+            if (gameOverThread != null && excludeThread != gameOverThread)
+                gameOverThread.Abort();
+
+            if (gameHandle != null) CancelFollowTeammate(null, null);
             if (follow != null) follow.Close();
             if (walkCheck != null) walkCheck.Close();
-            if (gameHandle != null) gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
         }
 
         /// <summary>
@@ -449,6 +452,7 @@ namespace LOLBot
                         Window gameWindow = new Window(gameIntPtr);
                         gameHandle = new GameHandle(gameWindow);
                         //窗口出现，跳出循环
+                        clientHandle.CancelWindowTopmost();
                         break;
                     }
                 }
@@ -498,6 +502,12 @@ namespace LOLBot
 
             if (gameHandle.Running())
             {
+                //点击一下游戏窗口
+
+                gameHandle.SetForeground();
+                Thread.Sleep(100);
+                InputManager.ShareInstance().SendLeftClick();
+          
                 follow = new System.Timers.Timer(5000);
                 follow.Elapsed += new ElapsedEventHandler(CancelFollowTeammate);
                 follow.AutoReset = true;
@@ -524,6 +534,7 @@ namespace LOLBot
             
             if(clientHandle.Running())
             {
+                clientHandle.SetWindowTopmost();
                 StartGameOverThread();
             }
             Console.WriteLine("PlayGame 结束");
@@ -536,6 +547,7 @@ namespace LOLBot
         {
             gameHandle.MouseRightDown();
             gameHandle.FollowTeammateWithHotkey(walkKeys[0]);
+            Thread.Sleep(100);
         }
 
         /// <summary>
@@ -545,8 +557,13 @@ namespace LOLBot
         /// <param name="e"></param>
         public static void CancelFollowTeammate(object sender, ElapsedEventArgs e)
         {
-            ((System.Timers.Timer)sender).Interval = new Random().Next(7000, 10000);
-            ((System.Timers.Timer)sender).Start();
+            if (sender != null)
+            {
+                ((System.Timers.Timer)sender).Interval = new Random().Next(7000, 10000);
+                ((System.Timers.Timer)sender).Start();
+            }
+            //响应暂离警告
+            gameHandle.AnswerLeaveWarning();
 
             gameHandle.MouseRightUp();
             gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
@@ -583,6 +600,7 @@ namespace LOLBot
                         Console.WriteLine("现在改键为 " + walkKeys[0]);
 
                         notWalkingTime = 0;
+                        WindowScreenshot();
                     }
                 }
                 else

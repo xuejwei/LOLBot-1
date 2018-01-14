@@ -127,5 +127,16 @@ namespace LOLBot
                 window.SetWindowNoTopmost();
             }
         }
+
+        /// <summary>
+        /// 设置焦点
+        /// </summary>
+        public void SetForeground()
+        {
+            if(Running())
+            {
+                window.SetForeground();
+            }
+        }
     }
 }

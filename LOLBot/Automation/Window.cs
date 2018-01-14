@@ -129,6 +129,13 @@
         {
             User32.SetWindowPos(windowHandle, User32.HWND_NOTOPMOST, 1, 1, 1, 1, User32.SWP_NOMOVE | User32.SWP_NOSIZE);
         }
-        
+
+        /// <summary>
+        /// 设置焦点
+        /// </summary>
+        public void SetForeground()
+        {
+            User32.SetForegroundWindow(windowHandle);
+        }
     }
 }
