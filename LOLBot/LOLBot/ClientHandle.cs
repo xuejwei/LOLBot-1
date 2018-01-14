@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Drawing;
-using System.Windows;
+using System.Windows.Forms;
 using Automation;
 using Interceptor;
 
-using Window = Automation.Window;
-using Point = System.Drawing.Point;
+using Keys = Interceptor.Keys;
 
 namespace LOLBot
 {
@@ -137,8 +136,7 @@ namespace LOLBot
 
                 Thread th = new Thread(new ThreadStart(delegate ()
                 {
-                    Clipboard.Clear();
-                    Clipboard.SetDataObject(championName, true);
+                    Clipboard.SetDataObject(championName, true, 3, 200);
                 }));
                 th.TrySetApartmentState(ApartmentState.STA);
                 th.Start();

@@ -73,6 +73,16 @@ namespace LOLBot.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap BlueSpring {
+            get {
+                object obj = ResourceManager.GetObject("BlueSpring", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap ChampionHeadshotFrame {
             get {
                 object obj = ResourceManager.GetObject("ChampionHeadshotFrame", resourceCulture);
@@ -126,6 +136,16 @@ namespace LOLBot.Properties {
         internal static System.Drawing.Bitmap EditRune {
             get {
                 object obj = ResourceManager.GetObject("EditRune", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap GameSetting {
+            get {
+                object obj = ResourceManager.GetObject("GameSetting", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -223,6 +243,16 @@ namespace LOLBot.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap RedSpring {
+            get {
+                object obj = ResourceManager.GetObject("RedSpring", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap SearchChampion {
             get {
                 object obj = ResourceManager.GetObject("SearchChampion", resourceCulture);
@@ -266,16 +296,6 @@ namespace LOLBot.Properties {
         internal static System.Drawing.Bitmap WaitingStartGame {
             get {
                 object obj = ResourceManager.GetObject("WaitingStartGame", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap WalkMark {
-            get {
-                object obj = ResourceManager.GetObject("WalkMark", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

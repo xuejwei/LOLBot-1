@@ -29,8 +29,8 @@ namespace LOLBot
         /// <summary>
         /// 跟随英雄的时钟
         /// </summary>
-        static System.Timers.Timer follow;
-        static System.Timers.Timer walkCheck;
+        static System.Timers.Timer CancelFollowTimer;
+        static System.Timers.Timer WalkCheckTimer;
 
         static int notWalkingTime = 0;
 
@@ -102,10 +102,9 @@ namespace LOLBot
 
             if (gameOverThread != null && excludeThread != gameOverThread)
                 gameOverThread.Abort();
-
-            if (gameHandle != null) CancelFollowTeammate(null, null);
-            if (follow != null) follow.Close();
-            if (walkCheck != null) walkCheck.Close();
+            
+            if (CancelFollowTimer != null) CancelFollowTimer.Close();
+            if (WalkCheckTimer != null) WalkCheckTimer.Close();
         }
 
         /// <summary>
@@ -343,10 +342,7 @@ namespace LOLBot
                     
                     if (clientHandle.GetEditRuneBotton().IsEmpty)
                     {//找不到编辑符文按钮
-                        if (Process.GetProcessesByName("League of Legends").ToList().Count == 0)
-                        {//不存在游戏进程，返回队列处理事件
-                            StartInQueueThread();
-                        }
+                        StartInQueueThread();
                         break;
                     }
                     else
@@ -381,13 +377,12 @@ namespace LOLBot
                             }
                         }
                         else
-                        {// 没有英雄可以选择
-                         //清空搜索
+                        {
                         }
                     }
                     Thread.Sleep(3000);
                 }
-                Console.WriteLine("锁定英雄");
+
                 while (isLockInChampion || Process.GetProcessesByName("League of Legends").ToList().Count > 0)
                 {//已经选择英雄，或游戏已经运行起来了
                     Thread.Sleep(3000);
@@ -505,17 +500,15 @@ namespace LOLBot
                 //点击一下游戏窗口
 
                 gameHandle.SetForeground();
-                Thread.Sleep(100);
-                InputManager.ShareInstance().SendLeftClick();
-          
-                follow = new System.Timers.Timer(5000);
-                follow.Elapsed += new ElapsedEventHandler(CancelFollowTeammate);
-                follow.AutoReset = true;
-                follow.Start();
 
-                walkCheck = new System.Timers.Timer(8000);
-                walkCheck.Elapsed += new ElapsedEventHandler(IsWalking);
-                walkCheck.Start();
+                CancelFollowTimer = new System.Timers.Timer(5000);
+                CancelFollowTimer.Elapsed += new ElapsedEventHandler(CancelFollowTeammate);
+                CancelFollowTimer.AutoReset = true;
+                CancelFollowTimer.Start();
+
+                WalkCheckTimer = new System.Timers.Timer(8000);
+                WalkCheckTimer.Elapsed += new ElapsedEventHandler(IsWalking);
+                WalkCheckTimer.Start();
 
                 gameHandle.MouseRandomMove();
                 while (gameHandle.Running())
@@ -526,16 +519,19 @@ namespace LOLBot
                     }
                 }
                 //游戏停止运行
-                follow.Stop();
-                follow.Close();
-                walkCheck.Stop();
-                walkCheck.Close();
+                CancelFollowTimer.Stop();
+                CancelFollowTimer.Close();
+                WalkCheckTimer.Stop();
+                WalkCheckTimer.Close();
             }
             
             if(clientHandle.Running())
             {
+                CancelFollowTeammate(null, null);
+
                 clientHandle.SetWindowTopmost();
                 StartGameOverThread();
+
             }
             Console.WriteLine("PlayGame 结束");
         }
@@ -545,9 +541,13 @@ namespace LOLBot
         /// </summary>
         public static void FollowTeammate()
         {
+            Keys key = walkKeys[0];
+
             gameHandle.MouseRightDown();
-            gameHandle.FollowTeammateWithHotkey(walkKeys[0]);
-            Thread.Sleep(100);
+            gameHandle.FollowTeammateWithHotkey(key);
+            Thread.Sleep(new Random().Next(20, 200));
+            gameHandle.MouseRightUp();
+            gameHandle.CancelFollowTeammateWithHotkey(key);
         }
 
         /// <summary>
@@ -564,10 +564,6 @@ namespace LOLBot
             }
             //响应暂离警告
             gameHandle.AnswerLeaveWarning();
-
-            gameHandle.MouseRightUp();
-            gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
-
             gameHandle.MouseRandomMove();
         }
 
@@ -592,7 +588,6 @@ namespace LOLBot
                     Console.WriteLine("没走动，已经检测到 " + notWalkingTime + "次");
                     if (notWalkingTime >= 4)
                     {//超过次数
-                        gameHandle.CancelFollowTeammateWithHotkey(walkKeys[0]);
                         Keys k1 = walkKeys[0];
                         walkKeys.RemoveAt(0);
                         walkKeys.Add(k1);

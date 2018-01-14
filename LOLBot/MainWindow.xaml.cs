@@ -59,7 +59,11 @@ namespace LOLBot
                 }
             }
 
-            InputManager.ShareInstance().Load();
+            if(!InputManager.ShareInstance().Load())
+            {
+                MessageBox.Show("你还没有安装键盘鼠标模拟器的驱动。请看使用说明");
+            }
+            InputManager.ShareInstance().OnKeyPressed += MainWindow_OnKeyPressed1;
             //requesAsync();
         }
 
@@ -95,13 +99,13 @@ namespace LOLBot
 
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
+            return;
             if (InputManager.ShareInstance().deviceId != 0)
             {
                 startBot();
             }
             else
             {
-                InputManager.ShareInstance().OnKeyPressed += MainWindow_OnKeyPressed1;
                 MessageBox.Show("每次启动后，需要按一次键盘后才能开启");
             }
         }
@@ -131,6 +135,7 @@ namespace LOLBot
         {
             Dispatcher.Invoke((Action)delegate
             {
+
                 if (e.Key == Interceptor.Keys.F10 && !startButton.IsEnabled)
                 {
                     stopBot();

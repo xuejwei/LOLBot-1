@@ -38,10 +38,10 @@ namespace LOLBot
         /// <returns></returns>
         public bool Playing()
         {
-            Bitmap walkMark = Properties.Resources.WalkMark;
-            ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(305, 750, 70, 18));
+            Bitmap gameSetting = Properties.Resources.GameSetting;
+            ParserImageInWindow parser = new ParserImageInWindow(gameSetting, base.window, new Rectangle(805, 745, 23, 23));
 
-            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 10) != 0;
+            bool found = parser.FindInWindow() != 0;
             parser.Dispose();
 
             if (found) return true; else return false;
@@ -73,16 +73,17 @@ namespace LOLBot
         /// <returns></returns>
         public Point GetNowWalkMarkPoint()
         {
-            Bitmap walkMark = Properties.Resources.WalkMark;
-            ParserImageInWindow parser = new ParserImageInWindow(walkMark, base.window, new Rectangle(305, 750, 70, 18));
+            Bitmap gameSetting = Properties.Resources.GameSetting;
+            ParserImageInWindow parser = new ParserImageInWindow(gameSetting, base.window, new Rectangle(805, 745, 23, 23));
             
-            int count = parser.FindInWindow(Color.FromArgb(255, 0, 255), 15, true);
+            int count = parser.FindInWindow(true);
             parser.Dispose();
             if(count > 0)
             {
                 Target target = parser.GetATarget();
-                
-                return target.rect.Location ;
+                Point point = target.rect.Location;
+                point.Y -= 5;
+                return point;
             }
             else
             {
@@ -96,17 +97,18 @@ namespace LOLBot
         /// <param name="markPoint">标记坐标</param>
         public void UpdateLastWalkMark(Point markPoint)
         {
-            Bitmap walkMark = Properties.Resources.WalkMark;
+            Bitmap gameSetting = Properties.Resources.GameSetting;
             
             Rectangle winRect = window.Rect;
-            Rectangle markRect = new Rectangle(winRect.X + markPoint.X, winRect.Y + markPoint.Y, walkMark.Size.Width, walkMark.Size.Height);
-            walkMark.Dispose(); //只是为了获取大小
+            Rectangle markRect = new Rectangle(winRect.X + markPoint.X, winRect.Y + markPoint.Y, gameSetting.Size.Width, gameSetting.Size.Height);
+            gameSetting.Dispose(); //只是为了获取大小
 
             Bitmap markScreenshot = new Bitmap(markRect.Width, markRect.Height);
             Graphics g = Graphics.FromImage(markScreenshot);
             g.CopyFromScreen(markRect.Location, Point.Empty, markRect.Size);
             g.Dispose();
             lastWalkMark = markScreenshot;
+            //markScreenshot.Save(@"C:\Users\Injoy\Desktop\draw.png");
         }
 
         public bool IsWalking(Point markPoint)

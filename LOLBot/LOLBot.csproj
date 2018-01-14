@@ -235,7 +235,6 @@
     <Resource Include="Resources\Image\PlayAgain.png" />
     <Resource Include="Resources\Image\SkipEvaluate.png" />
     <Resource Include="Resources\Image\PlayerFrame.png" />
-    <Resource Include="Resources\Image\WalkMark.png" />
     <Resource Include="Resources\Image\WaitingStartGame.png" />
     <Resource Include="Resources\Image\LockInChampion.png" />
     <Resource Include="Resources\Image\EditRune.png" />
@@ -261,6 +260,9 @@
     <Content Include="interception.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Image\BlueSpring.png" />
+    <Resource Include="Resources\Image\GameSetting.png" />
+    <Resource Include="Resources\Image\RedSpring.png" />
     <Resource Include="Resources\Image\LeaveWarning.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
