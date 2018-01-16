@@ -285,7 +285,7 @@ namespace LOLBot
 
                         if (clientHandle.Accept())
                         { //点击接受游戏
-                            Thread.Sleep(10000);
+                            Thread.Sleep(6000);
 
                             StartChooseChampionThread();
                             break;
@@ -610,7 +610,7 @@ namespace LOLBot
             Graphics g = Graphics.FromImage(windowScreenshot);
             g.CopyFromScreen(winRect.Location, Point.Empty, winRect.Size);
             g.Dispose();
-            
+
             windowScreenshot.Save(@"C:\LOL\" + DateTime.Now.ToString("MM月dd日HH时mm分ss秒") + ".png");
             windowScreenshot.Dispose();
         }

@@ -25,7 +25,7 @@ namespace LOLBot
             ParserImageInWindow parser = new ParserImageInWindow(inQueue, base.window, new Rectangle(1124, 40, 100, 50));
             ParserImageInWindow parserDark = new ParserImageInWindow(InQueue_Dark, base.window, new Rectangle(1124, 40, 100, 50));
 
-            int count = parser.FindInWindow(Color.Empty, 30) + parserDark.FindInWindow();
+            int count = parser.FindInWindow(Color.Empty, 30) + parserDark.FindInWindow(Color.Empty, 30);
             parser.Dispose();
             parserDark.Dispose();
 
