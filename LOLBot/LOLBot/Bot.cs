@@ -345,7 +345,7 @@ namespace LOLBot
                             break;
                         }
                         else if (clientHandle.SearchChampion(championNames[championNamesIndex]))
-                        {//随机选择一个英雄
+                        {//搜索英雄
                             Thread.Sleep(1000);
                             if (!clientHandle.RandomlyChooseChampion())
                             {//如果没有英雄可以选择
@@ -368,8 +368,19 @@ namespace LOLBot
                                 continue;
                             }
                         }
-                        else
-                        {
+                        else if(clientHandle.RandomlyChooseChampion())
+                        {//随机选择一个英雄
+                            Thread.Sleep(1000);
+                            clientHandle.CloseTip();//关闭提示，防止干扰
+                            Thread.Sleep(1000);
+                            if (clientHandle.LockInChampion())
+                            {//锁定英雄
+                                continue;
+                            }
+                            else if(clientHandle.BanChampion())
+                            {//禁用英雄
+                                continue;
+                            }
                         }
                     }
                     Thread.Sleep(3000);

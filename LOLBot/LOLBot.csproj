@@ -260,6 +260,8 @@
     <Content Include="interception.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Image\Ban.png" />
+    <Resource Include="Resources\Image\BanChampionHeadshotFrame.png" />
     <Resource Include="Resources\Image\HP.png" />
     <Resource Include="Resources\Image\BlueSpring.png" />
     <Resource Include="Resources\Image\GameSetting.png" />

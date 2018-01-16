@@ -190,15 +190,21 @@ namespace LOLBot
         public bool RandomlyChooseChampion()
         {
             Bitmap ChampionHeadshotFrame = Properties.Resources.ChampionHeadshotFrame;
+            Bitmap BanChampionHeadshotFrame = Properties.Resources.BanChampionHeadshotFrame;
 
             ParserImageInWindow parser = new ParserImageInWindow(ChampionHeadshotFrame, base.window, new Rectangle(340, 130, 610, 470));
-            bool found = parser.FindInWindow(Color.White, 0) != 0;
+            ParserImageInWindow banParser = new ParserImageInWindow(BanChampionHeadshotFrame, base.window, new Rectangle(340, 130, 610, 470));
+
+            int count = parser.FindInWindow(Color.White, 0);
+            int banCount = banParser.FindInWindow(Color.White, 0);
             parser.Dispose();
+            banParser.Dispose();
 
-            if (found)
+            if (count + banCount > 0)
             {
-                Target[] targets = parser.GetTargets();
-
+                Target[] targets;
+                if (banCount > 0) targets = banParser.GetTargets(); else targets = parser.GetTargets();
+                //先选择禁用英雄
                 Point clickPoint = targets[new Random().Next(0, targets.Length - 1)].randomPoint;
 
                 base.Click(clickPoint);
@@ -227,6 +233,31 @@ namespace LOLBot
             {
                 Target targets = parser.GetATarget();
 
+                base.Click(targets.randomPoint);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 禁用英雄
+        /// </summary>
+        /// <returns></returns>
+        public bool BanChampion()
+        {
+            Bitmap ban = Properties.Resources.Ban;
+
+            ParserImageInWindow parser = new ParserImageInWindow(ban, base.window, new Rectangle(550, 575, 210, 80));
+            bool found = parser.FindInWindow(Color.Empty, 30) != 0;
+            parser.Dispose();
+
+            if (found)
+            {
+                Target targets = parser.GetATarget();
                 base.Click(targets.randomPoint);
 
                 return true;
