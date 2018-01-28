@@ -106,6 +106,11 @@ namespace LOLBot
             {
                 if(win.ClassName == "RCLIENT" && win.WindowName == "League of Legends")
                 {
+                    if(win.IsIconic())
+                    {
+                        win.SetWindowTopmost();
+                        win.SetWindowNoTopmost();
+                    }
                     if(win.Rect.Size.Width == 1280)
                     {
                         return win.windowHandle;
