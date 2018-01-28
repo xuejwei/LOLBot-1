@@ -43,7 +43,7 @@ namespace LOLBot
             walkKeys.Add(Keys.F4);
             walkKeys.Add(Keys.F5);
 
-            IntPtr clientIntPtr = User32.FindWindow("RCLIENT", "League of Legends");
+            IntPtr clientIntPtr = GetClientIntPtr();
             IntPtr gameIntPtr = User32.FindWindow("RiotWindowClass", "League of Legends (TM) Client");
 
             bool runing = false;
@@ -97,6 +97,23 @@ namespace LOLBot
             
             if (CancelFollowTimer != null) CancelFollowTimer.Close();
             if (WalkCheckTimer != null) WalkCheckTimer.Close();
+        }
+
+        private static IntPtr GetClientIntPtr()
+        {
+            Window[] windows = Window.GetAllDesktopWindows();
+            foreach(Window win in windows)
+            {
+                if(win.ClassName == "RCLIENT" && win.WindowName == "League of Legends")
+                {
+                    if(win.Rect.Size.Width == 1280)
+                    {
+                        return win.windowHandle;
+                    }
+                }
+            }
+
+            return IntPtr.Zero;
         }
 
         /// <summary>
@@ -186,6 +203,7 @@ namespace LOLBot
                     }
                     else if(clientHandle.PlayAgain())
                     {//点击再来一次
+                        Thread.Sleep(7000);
                         StartInTeamRoomThreadThread();
                         break;
                     }
@@ -577,7 +595,7 @@ namespace LOLBot
             {
                 Console.WriteLine("找不到判断标记");
                 notWalkingTime++;
-                WindowScreenshot();
+                //WindowScreenshot();
                 return;
             }
             else
@@ -598,7 +616,7 @@ namespace LOLBot
                         Console.WriteLine("现在改键为 " + walkKeys[0]);
 
                         notWalkingTime = 0;
-                        WindowScreenshot();
+                        //WindowScreenshot();
                     }
                 }
                 else

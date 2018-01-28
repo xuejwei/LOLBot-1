@@ -1,8 +1,10 @@
 ﻿namespace Automation
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
+    using System.Text;
     using WinApi;
     using WinApi.Structs;
     using Point = WinApi.Structs.Point;
@@ -13,13 +15,22 @@
     public class Window
     {
         public readonly IntPtr windowHandle;
+        public readonly String ClassName;
+        public readonly String WindowName;
         private Rect rect;
+
 
         public Window(IntPtr handle)
         {
             this.windowHandle = handle;
             this.rect = new Rect();
             User32.GetWindowRect(this.windowHandle, ref this.rect);
+
+            StringBuilder sb = new StringBuilder(256);
+            User32.GetWindowText(handle, sb, sb.Capacity);
+            this.WindowName = sb.ToString();
+            User32.GetClassName(handle, sb, sb.Capacity);
+            this.ClassName = sb.ToString();
         }
 
         public Window(int x, int y) :
@@ -30,6 +41,25 @@
         public Window(System.Drawing.Point pt)
             : this(pt.X, pt.Y)
         {
+        }
+
+        static public Window[] GetAllDesktopWindows()
+        {
+            //用来保存窗口对象 列表
+            List<Window> wndList = new List<Window>();
+
+            //enum all desktop windows 
+            User32.EnumWindows(delegate (IntPtr hWnd, int lParam)
+            {
+                Window wnd = new Window(hWnd);
+                StringBuilder sb = new StringBuilder(256);
+           
+                //add it into list 
+                wndList.Add(wnd);
+                return true;
+            }, 0);
+
+            return wndList.ToArray();
         }
 
         public Rect Rect

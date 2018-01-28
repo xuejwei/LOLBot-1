@@ -127,7 +127,7 @@ namespace LOLBot
             BitmapData nowImageData = nowWalkMark.LockBits(new Rectangle(0, 0, nowWalkMark.Width, nowWalkMark.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
             FindImage findImage = new FindImage();
-            int count = findImage.Match(lastImageData, nowImageData, new Rectangle(0, 0, lastWalkMark.Width, lastWalkMark.Height)).Length;
+            int count = findImage.Match(lastImageData, nowImageData, new Rectangle(0, 0, lastWalkMark.Width, lastWalkMark.Height), 8).Length;
 
             nowWalkMark.UnlockBits(nowImageData);
             nowWalkMark.Dispose();

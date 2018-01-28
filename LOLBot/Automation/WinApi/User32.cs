@@ -4,6 +4,8 @@
     using System.Runtime.InteropServices;
     using Structs;
     using System.Windows.Forms;
+    using System.Text;
+
     /// <summary>
     /// Contains PInvoke signatures for user32.dll functions.
     /// </summary>
@@ -23,6 +25,20 @@
         public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2); //取消窗体置顶
         public static uint SWP_NOMOVE = 0x0002; //不调整窗体位置
         public static uint SWP_NOSIZE = 0x0001; //不调整窗体大小
+
+        public delegate bool WNDENUMPROC(IntPtr hWnd, int lParam);
+
+        //用来遍历所有窗口 
+        [DllImport("user32.dll")]
+        public static extern bool EnumWindows(WNDENUMPROC lpEnumFunc, int lParam);
+
+        //获取窗口Text 
+        [DllImport("user32.dll")]
+        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        //获取窗口类名 
+        [DllImport("user32.dll")]
+        public static extern int GetClassName(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll")]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
