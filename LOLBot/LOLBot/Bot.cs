@@ -247,6 +247,11 @@ namespace LOLBot
                 while (true)
                 {
                     Thread.Sleep(1000);
+                    if (Process.GetProcessesByName("League of Legends").ToList().Count > 0)
+                    {//游戏在运行了
+                        StartLoadingGameThread();
+                        break;
+                    }
 
                     if (clientHandle.IsInQueue())
                     { //在队列中
@@ -571,7 +576,7 @@ namespace LOLBot
 
             gameHandle.MouseRightDown();
             gameHandle.FollowTeammateWithHotkey(key);
-            Thread.Sleep(new Random().Next(3000, 5000));
+            Thread.Sleep(new Random().Next(6000, 8000));
             gameHandle.MouseRightUp();
             gameHandle.CancelFollowTeammateWithHotkey(key);
         }
@@ -595,38 +600,41 @@ namespace LOLBot
 
         public static void IsWalking(object sender, ElapsedEventArgs e)
         {
-            Point point = gameHandle.GetNowWalkMarkPoint();
-            if(point.IsEmpty)
+            if (gameHandle.Running())
             {
-                Console.WriteLine("找不到判断标记");
-                notWalkingTime++;
-                //WindowScreenshot();
-                return;
-            }
-            else
-            {
-                bool isWalking = gameHandle.IsWalking(point);
-                gameHandle.UpdateLastWalkMark(point);
-
-                if(!isWalking)
-                {//没走动
+                Point point = gameHandle.GetNowWalkMarkPoint();
+                if (point.IsEmpty)
+                {
+                    Console.WriteLine("找不到判断标记");
                     notWalkingTime++;
-                    Console.WriteLine("没走动，已经检测到 " + notWalkingTime + "次");
-                    if (notWalkingTime >= 4)
-                    {//超过次数
-                        Keys k1 = walkKeys[0];
-                        walkKeys.RemoveAt(0);
-                        walkKeys.Add(k1);
-
-                        Console.WriteLine("现在改键为 " + walkKeys[0]);
-
-                        notWalkingTime = 0;
-                        //WindowScreenshot();
-                    }
+                    //WindowScreenshot();
+                    return;
                 }
                 else
                 {
-                    Console.WriteLine("在走动");
+                    bool isWalking = gameHandle.IsWalking(point);
+                    gameHandle.UpdateLastWalkMark(point);
+
+                    if (!isWalking)
+                    {//没走动
+                        notWalkingTime++;
+                        Console.WriteLine("没走动，已经检测到 " + notWalkingTime + "次");
+                        if (notWalkingTime >= 4)
+                        {//超过次数
+                            Keys k1 = walkKeys[0];
+                            walkKeys.RemoveAt(0);
+                            walkKeys.Add(k1);
+
+                            Console.WriteLine("现在改键为 " + walkKeys[0]);
+
+                            notWalkingTime = 0;
+                            //WindowScreenshot();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("在走动");
+                    }
                 }
             }
         }

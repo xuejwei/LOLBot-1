@@ -136,7 +136,12 @@ namespace LOLBot
 
                 Thread th = new Thread(new ThreadStart(delegate ()
                 {
-                    Clipboard.SetDataObject(championName, true, 3, 200);
+                    try
+                    {
+                        Clipboard.Clear();
+                        Clipboard.SetDataObject(championName, true, 3, 200);
+                    }
+                    catch (Exception) { }
                 }));
                 th.TrySetApartmentState(ApartmentState.STA);
                 th.Start();
@@ -278,7 +283,7 @@ namespace LOLBot
 
             ParserImageInWindow parser = new ParserImageInWindow(waitingStartGame, base.window, new Rectangle(525, 10, 220, 50));
 
-            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 50) != 0;
+            bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 80, true) != 0;
             parser.Dispose();
 
             if (found) return true; else return false;
