@@ -21,7 +21,9 @@
 * 没有反应最有可能的原因：你使用了**安全启动**，计算机直接拦截了驱动发出的点击信号。你需要在 BIOS 中关闭安全启动。比如我笔记本的安全启动设置选项，在 BIOS 的启动设置中。
 
 ## 许可证 License
+
 许可证: **署名 - 非商业性使用 - 相同方式共享4.0国际 （CC BY-NC-SA 4.0）**
+
 License: **Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**
 
 **你可以自由地：**
