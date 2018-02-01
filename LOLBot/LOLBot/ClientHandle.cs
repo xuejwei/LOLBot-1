@@ -171,7 +171,7 @@ namespace LOLBot
         {
             Bitmap editRune = Properties.Resources.EditRune;
 
-            ParserImageInWindow parser = new ParserImageInWindow(editRune, base.window, new Rectangle(370, 666, 90, 50));
+            ParserImageInWindow parser = new ParserImageInWindow(editRune, base.window, new Rectangle(400, 666, 90, 50));
             bool found = parser.FindInWindow(Color.FromArgb(255, 0, 255), 30, true) != 0;
             parser.Dispose();
 
