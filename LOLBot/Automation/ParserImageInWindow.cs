@@ -47,13 +47,13 @@ namespace Automation
             Bitmap windowScreenshot;
             if (useDesktopCapture)
             {
-                if(window.IsIconic())
+                Rectangle winRect = window.Rect;
+                winRect.X = 0; winRect.Y = 0;
+
+                if (window.IsIconic() || winRect.IsEmpty)
                 {
                     return new Bitmap(1, 1, PixelFormat.Format24bppRgb);
                 } 
-
-                Rectangle winRect = window.Rect;
-                winRect.X = 0; winRect.Y = 0;
                 window.Move(new Rectangle(0, 0, winRect.Width, winRect.Height));
                 
                 windowScreenshot = new Bitmap(winRect.Width, winRect.Height);

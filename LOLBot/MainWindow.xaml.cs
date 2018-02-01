@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -64,20 +64,6 @@ namespace LOLBot
                 MessageBox.Show("你还没有安装键盘鼠标模拟器的驱动。请看使用说明");
             }
             InputManager.ShareInstance().OnKeyPressed += MainWindow_OnKeyPressed1;
-
-            requesAsync();
-        }
-
-        private async Task requesAsync()
-        {
-            string text = await "http://api.mmuaa.com/gettime".GetStringAsync();
-            DateTime now = DateTime.ParseExact(text, "#yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-            DateTime time = DateTime.ParseExact("#20180118000001", "#yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-            if (now.CompareTo(time) > 1)
-            {
-                stopBot();
-                MessageBox.Show("应用有效期截至 2018 年 1 月 16 日，现在无法使用，请更新最新版");
-            }
         }
 
         private IntPtr HotKeyHook(IntPtr hWnd, int msg, IntPtr wideParam, IntPtr longParam, ref bool handled)
