@@ -40,8 +40,8 @@ namespace LOLBot
         {
             walkKeys.Add(Keys.F2);
             walkKeys.Add(Keys.F3);
-            walkKeys.Add(Keys.F4);
-            walkKeys.Add(Keys.F5);
+            //walkKeys.Add(Keys.F4);
+            //walkKeys.Add(Keys.F5);
 
             IntPtr clientIntPtr = GetClientIntPtr();
             IntPtr gameIntPtr = User32.FindWindow("RiotWindowClass", "League of Legends (TM) Client");
@@ -221,10 +221,6 @@ namespace LOLBot
                     {//已经在选择英雄
                         StartChooseChampionThread();
                         break;
-                    }
-                    else if(!clientHandle.CanExecuteUserEvent())
-                    {
-                        clientHandle.SetWindowTopmost();
                     }
                     else
                     {
