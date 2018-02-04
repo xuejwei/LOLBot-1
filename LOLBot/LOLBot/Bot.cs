@@ -222,6 +222,10 @@ namespace LOLBot
                         StartChooseChampionThread();
                         break;
                     }
+                    else if(!clientHandle.CanExecuteUserEvent())
+                    {
+                        clientHandle.SetWindowTopmost();
+                    }
                     else
                     {
                         CloseTipAndAlert();
