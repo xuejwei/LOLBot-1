@@ -87,7 +87,7 @@ namespace LOLBot
             Bitmap acceptImage = Properties.Resources.Accept;
 
             ParserImageInWindow parser = new ParserImageInWindow(acceptImage, base.window, new Rectangle(545, 525, 220, 90));
-            bool found = parser.FindInWindow(Color.White, 20) != 0;
+            bool found = parser.FindInWindow(Color.White, 10) != 0;
             parser.Dispose();
             if (found)
             {
