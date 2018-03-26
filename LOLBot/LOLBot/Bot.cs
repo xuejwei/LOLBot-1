@@ -40,8 +40,8 @@ namespace LOLBot
         {
             walkKeys.Add(Keys.F2);
             walkKeys.Add(Keys.F3);
-            //walkKeys.Add(Keys.F4);
-            //walkKeys.Add(Keys.F5);
+            walkKeys.Add(Keys.F4);
+            walkKeys.Add(Keys.F5);
 
             IntPtr clientIntPtr = GetClientIntPtr();
             IntPtr gameIntPtr = User32.FindWindow("RiotWindowClass", "League of Legends (TM) Client");
@@ -374,7 +374,7 @@ namespace LOLBot
                         }
                         else if (clientHandle.SearchChampion(championNames[championNamesIndex]))
                         {//搜索英雄
-                            Thread.Sleep(1000);
+                            Thread.Sleep(2000);
                             if (!clientHandle.RandomlyChooseChampion())
                             {//如果没有英雄可以选择
                                 championNamesIndex++;   //切换下一个英雄名
@@ -398,9 +398,9 @@ namespace LOLBot
                         }
                         else if(clientHandle.RandomlyChooseChampion())
                         {//随机选择一个英雄
-                            Thread.Sleep(1000);
+                            Thread.Sleep(2000);
                             clientHandle.CloseTip();//关闭提示，防止干扰
-                            Thread.Sleep(1000);
+                            Thread.Sleep(2000);
                             if (clientHandle.LockInChampion())
                             {//锁定英雄
                                 continue;
@@ -579,6 +579,19 @@ namespace LOLBot
             Thread.Sleep(new Random().Next(6000, 8000));
             gameHandle.MouseRightUp();
             gameHandle.CancelFollowTeammateWithHotkey(key);
+
+            Thread.Sleep(new Random().Next(50, 100));
+            InputManager.ShareInstance().SendKey(Keys.LeftShift, KeyState.Down);
+            Thread.Sleep(new Random().Next(50, 100));
+            InputManager.ShareInstance().SendKey(Keys.Q, KeyState.Down);
+            Thread.Sleep(new Random().Next(50, 100));
+            InputManager.ShareInstance().SendKey(Keys.Q, KeyState.Up);
+            Thread.Sleep(new Random().Next(50, 100));
+            InputManager.ShareInstance().SendKey(Keys.LeftShift, KeyState.Up);
+            Thread.Sleep(new Random().Next(50, 100));
+            InputManager.ShareInstance().SendKey(Keys.Q, KeyState.Down);
+            Thread.Sleep(new Random().Next(50, 100));
+            InputManager.ShareInstance().SendKey(Keys.Q, KeyState.Up);
         }
 
         /// <summary>

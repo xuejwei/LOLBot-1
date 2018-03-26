@@ -40,7 +40,7 @@ namespace Interceptor
         public event EventHandler<KeyPressedEventArgs> OnKeyPressed;
         public event EventHandler<MousePressedEventArgs> OnMousePressed;
 
-        public int deviceId; /* Very important; which device the driver sends events to */
+        public int deviceId = 1; /* Very important; which device the driver sends events to */
 
         public Input()
         {
