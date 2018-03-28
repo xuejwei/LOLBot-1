@@ -56,7 +56,7 @@ namespace LOLBot
 
             ParserImageInWindow parserNormal = new ParserImageInWindow(queueUpNormal, base.window, new Rectangle(425, 660, 230, 50));
             ParserImageInWindow parserHover = new ParserImageInWindow(queueUpHover, base.window, new Rectangle(425, 660, 230, 50));
-            bool found = parserNormal.FindInWindow(Color.Empty, 30) != 0 || parserHover.FindInWindow(Color.Empty, 30) != 0;
+            bool found = parserNormal.FindInWindow(Color.White, 30) != 0 || parserHover.FindInWindow(Color.White, 30) != 0;
             parserNormal.Dispose();
             parserHover.Dispose();
 
