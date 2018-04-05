@@ -200,8 +200,8 @@ namespace LOLBot
             ParserImageInWindow parser = new ParserImageInWindow(ChampionHeadshotFrame, base.window, new Rectangle(340, 130, 610, 470));
             ParserImageInWindow banParser = new ParserImageInWindow(BanChampionHeadshotFrame, base.window, new Rectangle(340, 130, 610, 470));
 
-            int count = parser.FindInWindow(Color.White, 0);
-            int banCount = banParser.FindInWindow(Color.White, 0);
+            int count = parser.FindInWindow(Color.White, 30);
+            int banCount = banParser.FindInWindow(Color.White, 30);
             parser.Dispose();
             banParser.Dispose();
 
@@ -210,7 +210,7 @@ namespace LOLBot
                 Target[] targets;
                 if (banCount > 0) targets = banParser.GetTargets(); else targets = parser.GetTargets();
                 //先选择禁用英雄
-                Point clickPoint = targets[new Random().Next(0, targets.Length - 1)].randomPoint;
+                Point clickPoint = targets[new Random().Next(0, targets.Length - 1)].Centre;
 
                 base.Click(clickPoint);
 
