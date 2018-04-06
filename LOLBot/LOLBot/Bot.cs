@@ -580,17 +580,17 @@ namespace LOLBot
             gameHandle.MouseRightUp();
             gameHandle.CancelFollowTeammateWithHotkey(key);
 
-            Thread.Sleep(new Random().Next(50, 100));
+            Thread.Sleep(new Random().Next(5, 30));
             InputManager.ShareInstance().SendKey(Keys.LeftShift, KeyState.Down);
-            Thread.Sleep(new Random().Next(50, 100));
+            Thread.Sleep(new Random().Next(5, 30));
             InputManager.ShareInstance().SendKey(Keys.Q, KeyState.Down);
-            Thread.Sleep(new Random().Next(50, 100));
+            Thread.Sleep(new Random().Next(5, 30));
             InputManager.ShareInstance().SendKey(Keys.Q, KeyState.Up);
-            Thread.Sleep(new Random().Next(50, 100));
+            Thread.Sleep(new Random().Next(5, 30));
             InputManager.ShareInstance().SendKey(Keys.LeftShift, KeyState.Up);
-            Thread.Sleep(new Random().Next(50, 100));
+            Thread.Sleep(new Random().Next(5, 30));
             InputManager.ShareInstance().SendKey(Keys.Q, KeyState.Down);
-            Thread.Sleep(new Random().Next(50, 100));
+            Thread.Sleep(new Random().Next(5, 30));
             InputManager.ShareInstance().SendKey(Keys.Q, KeyState.Up);
         }
 
