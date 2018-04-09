@@ -85,14 +85,21 @@ namespace LOLBot
         public bool Accept()
         {
             Bitmap acceptImage = Properties.Resources.Accept;
+            Bitmap acceptHoverImage = Properties.Resources.Accept_Hover;
 
-            ParserImageInWindow parser = new ParserImageInWindow(acceptImage, base.window, new Rectangle(545, 525, 220, 90));
-            bool found = parser.FindInWindow(Color.White, 10) != 0;
-            parser.Dispose();
+            ParserImageInWindow parserNormal = new ParserImageInWindow(acceptImage, base.window, new Rectangle(545, 525, 220, 90));
+            ParserImageInWindow parserHover = new ParserImageInWindow(acceptHoverImage, base.window, new Rectangle(545, 525, 220, 90));
+            bool found = parserNormal.FindInWindow(Color.White, 10) != 0 || parserHover.FindInWindow(Color.White, 10) != 0;
+            parserNormal.Dispose();
+            parserHover.Dispose();
             if (found)
             {
-                Target target = parser.GetATarget();
-                Point clickPoint = target.randomPoint;
+                Target normalTarget = parserNormal.GetATarget();
+                Target hoverTarget = parserHover.GetATarget();
+                Point clickPoint = Point.Empty;
+
+                if (normalTarget != null) clickPoint = normalTarget.randomPoint;
+                if (hoverTarget != null) clickPoint = hoverTarget.randomPoint;
 
                 base.Click(clickPoint);
 

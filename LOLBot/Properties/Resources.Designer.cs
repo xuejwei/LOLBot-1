@@ -73,6 +73,16 @@ namespace LOLBot.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap Accept_Hover {
+            get {
+                object obj = ResourceManager.GetObject("Accept_Hover", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap Ban {
             get {
                 object obj = ResourceManager.GetObject("Ban", resourceCulture);

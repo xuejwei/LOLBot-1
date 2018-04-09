@@ -262,6 +262,7 @@
     <Content Include="interception.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Image\Accept_Hover.png" />
     <Resource Include="Resources\Image\Ban.png" />
     <Resource Include="Resources\Image\BanChampionHeadshotFrame.png" />
     <Resource Include="Resources\Image\HP.png" />
