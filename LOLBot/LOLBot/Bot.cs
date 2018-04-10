@@ -377,6 +377,12 @@ namespace LOLBot
                             Thread.Sleep(2000);
                             if (!clientHandle.RandomlyChooseChampion())
                             {//如果没有英雄可以选择
+                                Thread.Sleep(2000);
+                                if (clientHandle.LockInChampion())
+                                {//可能已经选择
+                                    continue;
+                                }
+
                                 championNamesIndex++;   //切换下一个英雄名
                                 if (championNamesIndex == championNames.Length)
                                 {//已经没有备选英雄了
